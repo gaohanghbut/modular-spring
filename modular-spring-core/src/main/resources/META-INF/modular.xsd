@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<xsd:schema xmlns="http://www.yxffcode.cn/modular"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.yxffcode.cn/modular"
+            elementFormDefault="qualified"
+            attributeFormDefault="unqualified">
+
+  <xsd:element name="service">
+    <xsd:annotation>
+      <xsd:documentation>
+        绑定服务,当一个模块需要暴露服务给其它模块使用的时候可用此标签
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="ref" type="xsd:string"/>
+      <xsd:attribute name="interface" type="xsd:string" use="required"/>
+      <xsd:attribute name="unique-id" type="xsd:string" use="optional"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="reference">
+    <xsd:annotation>
+      <xsd:documentation>
+        引用服务,当一个模块需要引用其它模块的服务的时候可用此标签
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="name" type="xsd:string"/>
+      <xsd:attribute name="interface" type="xsd:string" use="required"/>
+      <xsd:attribute name="unique-id" type="xsd:string" use="optional"/>
+    </xsd:complexType>
+  </xsd:element>
+
+</xsd:schema>
