@@ -1,6 +1,7 @@
 package cn.yxffcode.modularspring.boot;
 
 import com.google.common.base.Objects;
+import org.springframework.core.io.ClassPathResource;
 
 import java.util.List;
 
@@ -10,6 +11,7 @@ import java.util.List;
 public class ModuleConfig {
   private String moduleName;
   private List<String> dependenceModules;
+  private List<ClassPathResource> springConfigs;
 
   public String getModuleName() {
     return moduleName;
@@ -25,6 +27,14 @@ public class ModuleConfig {
 
   public void setDependenceModules(List<String> dependenceModules) {
     this.dependenceModules = dependenceModules;
+  }
+
+  public List<ClassPathResource> getSpringConfigs() {
+    return springConfigs;
+  }
+
+  public void setSpringConfigs(List<ClassPathResource> springConfigs) {
+    this.springConfigs = springConfigs;
   }
 
   @Override
@@ -45,6 +55,7 @@ public class ModuleConfig {
     return Objects.toStringHelper(this)
             .add("moduleName", moduleName)
             .add("dependenceModules", dependenceModules)
+            .add("springConfigs", springConfigs)
             .toString();
   }
 }
