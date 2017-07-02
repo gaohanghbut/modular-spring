@@ -1,4 +1,4 @@
-package cn.yxffcode.modularspring.boot;
+package cn.yxffcode.modularspring.boot.io;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Predicate;
@@ -151,7 +151,7 @@ public final class ClasspathScanner {
           continue;
         }
         if (acceptor.apply(entry.getName())) {
-          resources.add(ResourceInfo.of("jar:" + jarFile.getName() + ":" + entry.getName(), classloader));
+          resources.add(ResourceInfo.of("jar:" + jarFile.getName() + "!/" + entry.getName(), classloader));
         }
       }
     } finally {

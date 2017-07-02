@@ -1,7 +1,6 @@
 package cn.yxffcode.modularspring.boot;
 
 import com.google.common.base.Objects;
-import org.springframework.core.io.ClassPathResource;
 
 import java.util.List;
 
@@ -11,7 +10,8 @@ import java.util.List;
 public class ModuleConfig {
   private String moduleName;
   private List<String> dependenceModules;
-  private List<ClassPathResource> springConfigs;
+  private List<String> springConfigs;
+  private boolean fromFile;
 
   public String getModuleName() {
     return moduleName;
@@ -29,11 +29,11 @@ public class ModuleConfig {
     this.dependenceModules = dependenceModules;
   }
 
-  public List<ClassPathResource> getSpringConfigs() {
+  public List<String> getSpringConfigs() {
     return springConfigs;
   }
 
-  public void setSpringConfigs(List<ClassPathResource> springConfigs) {
+  public void setSpringConfigs(List<String> springConfigs) {
     this.springConfigs = springConfigs;
   }
 
@@ -50,12 +50,21 @@ public class ModuleConfig {
     return Objects.hashCode(moduleName);
   }
 
+  public boolean isFromFile() {
+    return fromFile;
+  }
+
+  public void setFromFile(boolean fromFile) {
+    this.fromFile = fromFile;
+  }
+
   @Override
   public String toString() {
     return Objects.toStringHelper(this)
             .add("moduleName", moduleName)
             .add("dependenceModules", dependenceModules)
             .add("springConfigs", springConfigs)
+            .add("fromFile", fromFile)
             .toString();
   }
 }

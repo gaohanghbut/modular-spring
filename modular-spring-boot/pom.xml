@@ -21,6 +21,5 @@
       <groupId>cn.yxffcode</groupId>
       <artifactId>modular-spring-core</artifactId>
     </dependency>
-
   </dependencies>
 </project>
