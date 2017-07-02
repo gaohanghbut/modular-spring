@@ -29,6 +29,9 @@ public final class ServiceReference implements FactoryBean<Object> {
 
       private void initDelegate() {
         final ServiceBean service = ServiceManager.getService(interfaceName, uniqueId);
+        if (service == null) {
+          throw new ServiceLocatingException("服务 " + targetClass + " 没有找到,请检查是否是模块依赖不正确");
+        }
         final ApplicationContext ctx = service.getApplicationContext();
         this.delegate = ctx.getBean(service.getRef());
       }
