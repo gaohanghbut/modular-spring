@@ -26,8 +26,8 @@
 
 ## modular-spring的模块的约定
 包含如下两类文件的jar或者子工程被认为是一个模块
-* META-INF/module.json(只能有一个)
-* META-INF/spring/xxx.xml(spring配置文件,可以有多个,全名随意)
+* META-INF/module.json(一个模块只能有一个)
+* META-INF/spring/xxx.xml(spring配置文件,一个模块可以有多个,全名随意)
 
 module.json文件是对模块的描述,包含模块名,模块依赖的其它模块列表,例如:
 ```json
