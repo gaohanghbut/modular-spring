@@ -16,7 +16,6 @@
       <groupId>com.alibaba</groupId>
       <artifactId>fastjson</artifactId>
     </dependency>
-
     <dependency>
       <groupId>cn.yxffcode</groupId>
       <artifactId>modular-spring-core</artifactId>

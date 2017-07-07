@@ -1,5 +1,6 @@
 package cn.yxffcode.modularspring.boot;
 
+import cn.yxffcode.modularspring.boot.graph.DirectedAcyclicGraph;
 import cn.yxffcode.modularspring.boot.io.ClasspathScanner;
 import cn.yxffcode.modularspring.core.context.ModuleJarEntryXmlApplicationContext;
 import cn.yxffcode.modularspring.core.io.JarEntryReader;
@@ -8,20 +9,27 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.base.Stopwatch;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.AbstractRefreshableApplicationContext;
+import org.springframework.util.CollectionUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author gaohang on 6/24/17.
@@ -32,40 +40,44 @@ public class DefaultModuleLoader implements ModuleLoader {
 
   public Map<ModuleConfig, ApplicationContext> load(ClassLoader classLoader) throws IOException {
 
-    final Map<String, ModuleConfig> moduleConfigs = resolveModuleJsonConfigs(classLoader);
+    final Collection<ModuleConfig> moduleConfigs = resolveModuleJsonConfigs(classLoader);
 
 
     //初始化spring
+    final Map<ModuleConfig, ApplicationContext> applicationContexts = createApplicationContexts(moduleConfigs);
+
+    final List<ModuleConfig> topological = topologicalSort(moduleConfigs);
+    //refresh
+    for (ModuleConfig moduleConfig : topological) {
+      final ApplicationContext applicationContext = applicationContexts.get(moduleConfig);
+      if (applicationContext instanceof ConfigurableApplicationContext) {
+        final Stopwatch stopwatch = Stopwatch.createStarted();
+        ((AbstractRefreshableApplicationContext) applicationContext).refresh();
+        final long time = stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
+        LOGGER.info("加载模块{}成功,用时{}ms", moduleConfig.getModuleName(), time);
+      }
+    }
+    return applicationContexts;
+  }
+
+  private Map<ModuleConfig, ApplicationContext> createApplicationContexts(Collection<ModuleConfig> moduleConfigs) {
     final Map<ModuleConfig, ApplicationContext> applicationContexts = Maps.newHashMapWithExpectedSize(moduleConfigs.size());
-    for (Map.Entry<String, ModuleConfig> en : moduleConfigs.entrySet()) {
-      final ModuleConfig moduleConfig = en.getValue();
+    for (ModuleConfig moduleConfig : moduleConfigs) {
 
       final List<String> springConfigs = moduleConfig.getSpringConfigs();
 
       final String[] configs = new String[springConfigs.size()];
       springConfigs.toArray(configs);
       if (moduleConfig.isFromFile()) {
-        applicationContexts.put(en.getValue(), new ModuleFileSystemApplicationContext(configs, false, null, en.getValue().getModuleName()));
+        applicationContexts.put(moduleConfig, new ModuleFileSystemApplicationContext(configs, false, null, moduleConfig.getModuleName()));
       } else {
-        applicationContexts.put(en.getValue(), new ModuleJarEntryXmlApplicationContext(configs, false, null, en.getValue().getModuleName()));
+        applicationContexts.put(moduleConfig, new ModuleJarEntryXmlApplicationContext(configs, false, null, moduleConfig.getModuleName()));
       }
     }
-
-    //refresh
-    for (Map.Entry<ModuleConfig, ApplicationContext> en : applicationContexts.entrySet()) {
-      final ApplicationContext applicationContext = en.getValue();
-      if (applicationContext instanceof ConfigurableApplicationContext) {
-        final Stopwatch stopwatch = Stopwatch.createStarted();
-        ((AbstractRefreshableApplicationContext) applicationContext).refresh();
-        final long time = stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
-        LOGGER.info("加载模块{}成功,用时{}ms", en.getKey().getModuleName(), time);
-      }
-    }
-
     return applicationContexts;
   }
 
-  protected Map<String, ModuleConfig> resolveModuleJsonConfigs(ClassLoader classLoader) throws IOException {
+  protected Collection<ModuleConfig> resolveModuleJsonConfigs(ClassLoader classLoader) throws IOException {
     final ClasspathScanner scanner = new ClasspathScanner();
 
     scanner.scan(classLoader, new Predicate<String>() {
@@ -127,7 +139,35 @@ public class DefaultModuleLoader implements ModuleLoader {
       }
     }
 
-    return moduleConfigs;
+    return moduleConfigs.values();
+  }
+
+  private List<ModuleConfig> topologicalSort(Collection<ModuleConfig> moduleConfigs) {
+    final Map<String, ModuleConfig> modules = Maps.newHashMap();
+    for (ModuleConfig moduleConfig : moduleConfigs) {
+      modules.put(moduleConfig.getModuleName(), moduleConfig);
+    }
+    //dependence
+    final Map<ModuleConfig, List<ModuleConfig>> dependenceMap = Maps.newHashMap();
+    for (ModuleConfig moduleConfig : moduleConfigs) {
+      final List<String> dependenceModules = moduleConfig.getDependenceModules();
+      if (CollectionUtils.isEmpty(dependenceModules)) {
+        dependenceMap.put(moduleConfig, Collections.emptyList());
+      } else {
+        final List<ModuleConfig> deps = Lists.newArrayList();
+        for (String dependenceModule : dependenceModules) {
+          final ModuleConfig module = modules.get(dependenceModule);
+          checkNotNull(module, "模块%s不存在", dependenceModule);
+          deps.add(module);
+        }
+        dependenceMap.put(moduleConfig, deps);
+      }
+    }
+    final DirectedAcyclicGraph<ModuleConfig> graph = new DirectedAcyclicGraph<>();
+    for (Map.Entry<ModuleConfig, List<ModuleConfig>> en : dependenceMap.entrySet()) {
+      graph.link(en.getKey(), en.getValue());
+    }
+    return graph.topological();
   }
 
 }
