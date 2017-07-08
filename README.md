@@ -27,7 +27,7 @@
 ## modular-spring的模块的约定
 包含如下两类文件的jar或者子工程被认为是一个模块
 * META-INF/module.json(一个模块只能有一个)
-* META-INF/spring/xxx.xml(spring配置文件,一个模块可以有多个,全名随意)
+* META-INF/spring/xxx.xml(spring配置文件,一个模块可以有多个,命名随意)
 
 module.json文件是对模块的描述,包含模块名,模块依赖的其它模块列表,例如:
 ```json
@@ -134,14 +134,14 @@ public class TestCoreService implements InitializingBean {
   }
 }
 ```
-### 使用<context:component-scan/>
+### 使用context:component-scan
 因为框架没有对各模块做classloader的隔离,为了防止当前模块扫描到其它模块里的bean,需要修改配置:
 ```xml
 <context:component-scan base-package="cn.yxffcode.modularspring">
     <context:exclude-filter type="custom" expression="cn.yxffcode.modularspring.boot.spring.ModuleTypeFilter"/>
 </context:component-scan>
 ```
-### 使用<modular:component-scan/>
+### 使用modular:component-scan
 待实现
 ### 后续计划
 * 检测模块之间的环形依赖
