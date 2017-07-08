@@ -18,6 +18,12 @@ import java.lang.annotation.Target;
 @Documented
 @Component
 public @interface ModularService {
+
+  /**
+   * @return bean的名字
+   */
+  String value() default "";
+
   Class<?> interfaceClass() default Object.class;
 
   String uniqueId() default "";
