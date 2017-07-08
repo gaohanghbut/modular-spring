@@ -1,7 +1,8 @@
 package cn.yxffcode.modularspring.boot;
 
 import cn.yxffcode.modularspring.boot.graph.DirectedAcyclicGraph;
-import cn.yxffcode.modularspring.boot.io.ClasspathScanner;
+import cn.yxffcode.modularspring.boot.utils.ModuleLoadContextHolder;
+import cn.yxffcode.modularspring.core.io.ClasspathScanner;
 import cn.yxffcode.modularspring.core.context.ModuleJarEntryXmlApplicationContext;
 import cn.yxffcode.modularspring.core.io.JarEntryReader;
 import cn.yxffcode.modularspring.core.context.ModuleFileSystemApplicationContext;
@@ -9,10 +10,10 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.base.Stopwatch;
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,23 +43,24 @@ public class DefaultModuleLoader implements ModuleLoader {
 
   public Map<ModuleConfig, ApplicationContext> load(ClassLoader classLoader) throws IOException {
 
-    final Collection<ModuleConfig> moduleConfigs = resolveModuleJsonConfigs(classLoader);
-
+    final BiMap<String, ModuleConfig> moduleConfigs = resolveModuleJsonConfigs(classLoader);
 
     //初始化spring
-    final Map<ModuleConfig, ApplicationContext> applicationContexts = createApplicationContexts(moduleConfigs);
+    final Map<ModuleConfig, ApplicationContext> applicationContexts = createApplicationContexts(moduleConfigs.values());
 
-    final List<ModuleConfig> topological = topologicalSort(moduleConfigs);
+    final List<ModuleConfig> topological = topologicalSort(moduleConfigs.values());
     //refresh
     for (ModuleConfig moduleConfig : topological) {
       final ApplicationContext applicationContext = applicationContexts.get(moduleConfig);
       if (applicationContext instanceof ConfigurableApplicationContext) {
+        ModuleLoadContextHolder.setLoadingModulePath(moduleConfigs.inverse().get(moduleConfig));
         final Stopwatch stopwatch = Stopwatch.createStarted();
         ((AbstractRefreshableApplicationContext) applicationContext).refresh();
         final long time = stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
         LOGGER.info("加载模块{}成功,用时{}ms", moduleConfig.getModuleName(), time);
       }
     }
+    ModuleLoadContextHolder.clean();
     return applicationContexts;
   }
 
@@ -79,7 +81,7 @@ public class DefaultModuleLoader implements ModuleLoader {
     return applicationContexts;
   }
 
-  protected Collection<ModuleConfig> resolveModuleJsonConfigs(ClassLoader classLoader) throws IOException {
+  protected BiMap<String, ModuleConfig> resolveModuleJsonConfigs(ClassLoader classLoader) throws IOException {
     final ClasspathScanner scanner = new ClasspathScanner();
 
     scanner.scan(classLoader, new Predicate<String>() {
@@ -89,7 +91,7 @@ public class DefaultModuleLoader implements ModuleLoader {
       }
     });
 
-    final Map<String, ModuleConfig> moduleConfigs = Maps.newHashMap();
+    final BiMap<String, ModuleConfig> moduleConfigs = HashBiMap.create();
 
     for (ClasspathScanner.ResourceInfo resourceInfo : scanner.getResources()) {
       final String resourceName = resourceInfo.getResourceName();
@@ -147,7 +149,7 @@ public class DefaultModuleLoader implements ModuleLoader {
         iterator.remove();
       }
     }
-    return moduleConfigs.values();
+    return moduleConfigs;
   }
 
   private List<ModuleConfig> topologicalSort(Collection<ModuleConfig> moduleConfigs) {

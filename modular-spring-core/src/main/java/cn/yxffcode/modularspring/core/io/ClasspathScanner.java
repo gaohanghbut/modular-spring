@@ -1,4 +1,4 @@
-package cn.yxffcode.modularspring.boot.io;
+package cn.yxffcode.modularspring.core.io;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Predicate;
