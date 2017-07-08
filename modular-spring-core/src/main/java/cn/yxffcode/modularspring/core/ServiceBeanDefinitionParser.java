@@ -1,9 +1,7 @@
 package cn.yxffcode.modularspring.core;
 
-import com.google.common.base.Strings;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
-import org.springframework.beans.factory.config.RuntimeBeanNameReference;
 import org.springframework.beans.factory.parsing.BeanComponentDefinition;
 import org.springframework.beans.factory.support.BeanNameGenerator;
 import org.springframework.beans.factory.support.DefaultBeanNameGenerator;
@@ -25,13 +23,10 @@ final class ServiceBeanDefinitionParser implements BeanDefinitionParser {
     final String anInterface = element.getAttribute("interface");
     final String uniqueId = element.getAttribute("unique-id");
 
-    final RootBeanDefinition bean = new RootBeanDefinition();
-    bean.setBeanClass(ServiceBean.class);
-    bean.getConstructorArgumentValues().addIndexedArgumentValue(0, new RuntimeBeanNameReference(ref));
-    bean.getConstructorArgumentValues().addIndexedArgumentValue(1, anInterface);
-    bean.getConstructorArgumentValues().addIndexedArgumentValue(2, Strings.nullToEmpty(uniqueId));
+    final RootBeanDefinition bean = ModularBeanUtils.buildServiceBean(ref, anInterface, uniqueId);
 
     parserContext.registerBeanComponent(new BeanComponentDefinition(new BeanDefinitionHolder(bean, beanNameGenerator.generateBeanName(bean, parserContext.getRegistry()))));
     return null;
   }
+
 }

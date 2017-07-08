@@ -13,12 +13,10 @@ import java.lang.reflect.Method;
  */
 public final class ServiceReference implements FactoryBean<Object> {
   private final Class<?> targetClass;
-  private final String interfaceName;
   private final String uniqueId;
 
-  public ServiceReference(Class<?> targetClass, String interfaceName, String uniqueId) {
+  public ServiceReference(Class<?> targetClass, String uniqueId) {
     this.targetClass = targetClass;
-    this.interfaceName = interfaceName;
     this.uniqueId = Strings.nullToEmpty(uniqueId);
   }
 
@@ -28,7 +26,7 @@ public final class ServiceReference implements FactoryBean<Object> {
       private Object delegate;
 
       private void initDelegate() {
-        final ServiceBean service = ServiceManager.getService(interfaceName, uniqueId);
+        final ServiceBean service = ServiceManager.getService(targetClass.getName(), uniqueId);
         if (service == null) {
           throw new ServiceLocatingException("服务 " + targetClass + " 没有找到,请检查是否是模块依赖不正确");
         }
