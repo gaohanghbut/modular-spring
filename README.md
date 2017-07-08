@@ -80,7 +80,70 @@ modular:service表示服务接口的暴露,意味着此接口能被其它模块�
 modular:reference表示引用一个服务,如果此模块对引用的服务有初始化依赖,则需要在module.json文件中配置模块
 依赖,即将服务所在的模块名配置到此模块的dependenceModules中.
 
+## 注解
+### 发布服务
+可使用@ModularService发布服务,使用ModularService标记的bean会被spring托管,并作为模块的服务发布,例如:
+```java
+package cn.yxffcode.modularspring.service;
+
+import cn.yxffcode.modularspring.core.annotation.ModularService;
+
+/**
+ * @author gaohang on 7/2/17.
+ */
+@ModularService
+public class TestServiceImpl implements TestService {
+  public void test() {
+    System.out.println("test service dal");
+  }
+}
+```
+### 引用服务
+可使用@ModularReference引用其它模块的服务,例如:
+```java
+package cn.yxffcode.modularspring.test;
+
+import cn.yxffcode.modularspring.core.annotation.ModularReference;
+import cn.yxffcode.modularspring.service.TestService;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.stereotype.Service;
+
+/**
+ * @author gaohang on 7/7/17.
+ */
+@Service
+public class TestCoreService implements InitializingBean {
+
+  @ModularReference
+  private TestService testService;
+
+  public void init() {
+    testService.test();
+  }
+
+  public TestService getTestService() {
+    return testService;
+  }
+
+  public void setTestService(TestService testService) {
+    this.testService = testService;
+  }
+
+  public void afterPropertiesSet() throws Exception {
+    init();
+  }
+}
+```
+### 使用<context:component-scan/>
+因为框架没有对各模块做classloader的隔离,为了防止当前模块扫描到其它模块里的bean,需要修改配置:
+```xml
+<context:component-scan base-package="cn.yxffcode.modularspring">
+    <context:exclude-filter type="custom" expression="cn.yxffcode.modularspring.boot.spring.ModuleTypeFilter"/>
+</context:component-scan>
+```
+### 使用<modular:component-scan/>
+待实现
 ### 后续计划
-* 服务的暴露与引用支持注解
 * 检测模块之间的环形依赖
+* 模块支持扩展点,比如数据访问模块依赖的数据源在拼装系统时,由系统的主模块指定
 * 扩展springmvc,支持controller的模块化
