@@ -4,7 +4,6 @@ import com.google.common.base.Strings;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.util.StringUtils;
 
 /**
  * @author gaohang on 6/24/17.

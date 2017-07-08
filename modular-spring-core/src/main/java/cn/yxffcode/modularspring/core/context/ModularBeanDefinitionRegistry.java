@@ -14,7 +14,6 @@ import org.springframework.beans.factory.support.DefaultBeanNameGenerator;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 
 import java.lang.reflect.Field;
-import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

@@ -1,11 +1,13 @@
 package cn.yxffcode.modularspring.boot;
 
 import cn.yxffcode.modularspring.boot.graph.DirectedAcyclicGraph;
+import cn.yxffcode.modularspring.boot.listener.ModuleLoadListener;
 import cn.yxffcode.modularspring.boot.utils.ModuleLoadContextHolder;
-import cn.yxffcode.modularspring.core.io.ClasspathScanner;
-import cn.yxffcode.modularspring.core.context.ModuleJarEntryXmlApplicationContext;
-import cn.yxffcode.modularspring.core.io.JarEntryReader;
+import cn.yxffcode.modularspring.core.context.ModuleApplicationContext;
 import cn.yxffcode.modularspring.core.context.ModuleFileSystemApplicationContext;
+import cn.yxffcode.modularspring.core.context.ModuleJarEntryXmlApplicationContext;
+import cn.yxffcode.modularspring.core.io.ClasspathScanner;
+import cn.yxffcode.modularspring.core.io.JarEntryReader;
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
@@ -41,22 +43,26 @@ public class DefaultModuleLoader implements ModuleLoader {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(DefaultModuleLoader.class);
 
-  public Map<ModuleConfig, ApplicationContext> load(ClassLoader classLoader) throws IOException {
+  private List<ModuleLoadListener> moduleLoadListeners;
+
+  public Map<ModuleConfig, ModuleApplicationContext> load(ClassLoader classLoader) throws IOException {
 
     final BiMap<String, ModuleConfig> moduleConfigs = resolveModuleJsonConfigs(classLoader);
 
     //初始化spring
-    final Map<ModuleConfig, ApplicationContext> applicationContexts = createApplicationContexts(moduleConfigs.values());
+    final Map<ModuleConfig, ModuleApplicationContext> applicationContexts = createApplicationContexts(moduleConfigs.values());
 
     final List<ModuleConfig> topological = topologicalSort(moduleConfigs.values());
     //refresh
     for (ModuleConfig moduleConfig : topological) {
-      final ApplicationContext applicationContext = applicationContexts.get(moduleConfig);
+      final ModuleApplicationContext applicationContext = applicationContexts.get(moduleConfig);
       if (applicationContext instanceof ConfigurableApplicationContext) {
         ModuleLoadContextHolder.setLoadingModulePath(moduleConfigs.inverse().get(moduleConfig));
         final Stopwatch stopwatch = Stopwatch.createStarted();
-        ((AbstractRefreshableApplicationContext) applicationContext).refresh();
+        invokeBeforeRefresh(moduleConfig, applicationContext);
+        applicationContext.refresh();
         final long time = stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
+        invokeAfterRefresh(moduleConfig, applicationContext);
         LOGGER.info("加载模块{}成功,用时{}ms", moduleConfig.getModuleName(), time);
       }
     }
@@ -64,8 +70,33 @@ public class DefaultModuleLoader implements ModuleLoader {
     return applicationContexts;
   }
 
-  private Map<ModuleConfig, ApplicationContext> createApplicationContexts(Collection<ModuleConfig> moduleConfigs) {
-    final Map<ModuleConfig, ApplicationContext> applicationContexts = Maps.newHashMapWithExpectedSize(moduleConfigs.size());
+  private void invokeAfterRefresh(ModuleConfig moduleConfig, ModuleApplicationContext applicationContext) {
+    if (!CollectionUtils.isEmpty(moduleLoadListeners)) {
+      for (ModuleLoadListener moduleLoadListener : moduleLoadListeners) {
+        moduleLoadListener.afterModuleLoad(moduleConfig, applicationContext);
+      }
+    }
+  }
+
+  private void invokeBeforeRefresh(ModuleConfig moduleConfig, ModuleApplicationContext applicationContext) {
+    if (!CollectionUtils.isEmpty(moduleLoadListeners)) {
+      for (ModuleLoadListener moduleLoadListener : moduleLoadListeners) {
+        moduleLoadListener.beforeModuleLoad(moduleConfig, applicationContext);
+      }
+    }
+  }
+
+  @Override
+  public void addModuleLoadListener(ModuleLoadListener moduleLoadListener) {
+    checkNotNull(moduleLoadListener);
+    if (moduleLoadListeners == null) {
+      moduleLoadListeners = Lists.newArrayList();
+    }
+    moduleLoadListeners.add(moduleLoadListener);
+  }
+
+  private Map<ModuleConfig, ModuleApplicationContext> createApplicationContexts(Collection<ModuleConfig> moduleConfigs) {
+    final Map<ModuleConfig, ModuleApplicationContext> applicationContexts = Maps.newHashMapWithExpectedSize(moduleConfigs.size());
     for (ModuleConfig moduleConfig : moduleConfigs) {
 
       final List<String> springConfigs = moduleConfig.getSpringConfigs();

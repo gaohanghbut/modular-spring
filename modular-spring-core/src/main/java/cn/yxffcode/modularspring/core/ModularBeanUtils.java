@@ -1,10 +1,8 @@
 package cn.yxffcode.modularspring.core;
 
 import com.google.common.base.Strings;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.RuntimeBeanNameReference;
 import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.beans.factory.xml.ParserContext;
 
 /**
  * @author gaohang on 7/8/17.

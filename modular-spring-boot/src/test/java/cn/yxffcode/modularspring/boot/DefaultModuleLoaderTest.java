@@ -1,13 +1,10 @@
 package cn.yxffcode.modularspring.boot;
 
-import com.google.common.reflect.ClassPath;
 import org.junit.Test;
 
 import java.io.File;
 import java.net.URL;
 import java.util.Enumeration;
-
-import static org.junit.Assert.*;
 
 /**
  * @author gaohang on 6/30/17.
