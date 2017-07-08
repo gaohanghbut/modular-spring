@@ -13,6 +13,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -25,6 +26,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -139,6 +141,12 @@ public class DefaultModuleLoader implements ModuleLoader {
       }
     }
 
+    for (final Iterator<Map.Entry<String, ModuleConfig>> iterator = moduleConfigs.entrySet().iterator(); iterator.hasNext(); ) {
+      final Map.Entry<String, ModuleConfig> en = iterator.next();
+      if (StringUtils.isBlank(en.getValue().getModuleName()) || CollectionUtils.isEmpty(en.getValue().getSpringConfigs())) {
+        iterator.remove();
+      }
+    }
     return moduleConfigs.values();
   }
 
