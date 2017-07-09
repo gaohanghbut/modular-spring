@@ -99,7 +99,7 @@ public class TestServiceImpl implements TestService {
 }
 ```
 ### 引用服务
-可使用@ModularReference引用其它模块的服务,例如:
+不同模块之间通过服务接口交互,可使用@ModularReference引用其它模块的服务,例如:
 ```java
 package cn.yxffcode.modularspring.test;
 
@@ -143,6 +143,9 @@ public class TestCoreService implements InitializingBean {
 ```
 ### 使用modular:component-scan
 待实现
+### 模块加载的前置处理和后置处理
+通过ModuleLoadListener接口可以对模块加载做前置处理或者后置处理,例如想要在
+
 ### 后续计划
 * 检测模块之间的环形依赖
 * 模块支持扩展点,比如数据访问模块依赖的数据源在拼装系统时,由系统的主模块指定
