@@ -103,13 +103,20 @@ public class DefaultModuleLoader implements ModuleLoader {
 
       final String[] configs = new String[springConfigs.size()];
       springConfigs.toArray(configs);
-      if (moduleConfig.isFromFile()) {
-        applicationContexts.put(moduleConfig, new ModuleFileSystemApplicationContext(configs, false, null, moduleConfig.getModuleName()));
-      } else {
-        applicationContexts.put(moduleConfig, new ModuleJarEntryXmlApplicationContext(configs, false, null, moduleConfig.getModuleName()));
-      }
+      final ModuleApplicationContext applicationContext = createModuleApplicationContext(moduleConfig, configs, moduleConfig.getModuleName());
+      applicationContexts.put(moduleConfig, applicationContext);
     }
     return applicationContexts;
+  }
+
+  protected ModuleApplicationContext createModuleApplicationContext(ModuleConfig moduleConfig, String[] configs, String moduleName) {
+    ModuleApplicationContext applicationContext;
+    if (moduleConfig.isFromFile()) {
+      applicationContext = new ModuleFileSystemApplicationContext(configs, false, null, moduleName);
+    } else {
+      applicationContext = new ModuleJarEntryXmlApplicationContext(configs, false, null, moduleName);
+    }
+    return applicationContext;
   }
 
   protected BiMap<String, ModuleConfig> resolveModuleJsonConfigs(ClassLoader classLoader) throws IOException {
