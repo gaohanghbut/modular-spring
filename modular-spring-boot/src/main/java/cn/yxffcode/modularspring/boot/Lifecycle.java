@@ -17,7 +17,15 @@ public class Lifecycle {
 
   private Map<ModuleConfig, ModuleApplicationContext> applicationContexts = Collections.emptyMap();
 
-  final ModuleLoader moduleLoader = new DefaultModuleLoader();
+  private final ModuleLoader moduleLoader;
+
+  public Lifecycle() {
+    this(new DefaultModuleLoader());
+  }
+
+  public Lifecycle(ModuleLoader moduleLoader) {
+    this.moduleLoader = moduleLoader;
+  }
 
   public void boot() {
     try {
