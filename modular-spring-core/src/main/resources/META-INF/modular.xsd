@@ -32,4 +32,28 @@
     </xsd:complexType>
   </xsd:element>
 
+  <xsd:element name="extension">
+    <xsd:annotation>
+      <xsd:documentation>
+        配置扩展点
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="name" type="xsd:string" use="required"/>
+      <xsd:attribute name="interface" type="xsd:string" use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="extension-point">
+    <xsd:annotation>
+      <xsd:documentation>
+        配置扩展点的实现
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="extension-name" type="xsd:string" use="required"/>
+      <xsd:attribute name="ref" type="xsd:string" use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+
 </xsd:schema>

@@ -8,7 +8,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * @author gaohang on 6/24/17.
  */
-public final class ServiceManager {
+final class ServiceManager {
   private ServiceManager() {
   }
 
