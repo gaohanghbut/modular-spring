@@ -193,5 +193,4 @@ public class PostFactoryBeanModuleLoadListener implements ModuleLoadListener {
   <modular:extension-point extension-name="dataSource" ref="dataSource"/>
 ```
 ### 后续计划
-* 检测模块之间的环形依赖
 * 扩展springmvc,支持controller的模块化
