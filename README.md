@@ -144,9 +144,54 @@ public class TestCoreService implements InitializingBean {
 ### 使用modular:component-scan
 待实现
 ### 模块加载的前置处理和后置处理
-通过ModuleLoadListener接口可以对模块加载做前置处理或者后置处理,例如想要在
+通过ModuleLoadListener接口可以对模块加载做前置处理或者后置处理,例如想要在模块加载前向模块中添加某些Bean,
+可以在ModuleLoadListener中对spring注册BeanDefinitionRegistryPostProcessor:
+```java
+package cn.yxffcode.modularspring.service;
 
+import cn.yxffcode.modularspring.boot.ModuleConfig;
+import cn.yxffcode.modularspring.boot.listener.ModuleLoadListener;
+import cn.yxffcode.modularspring.core.context.ModuleApplicationContext;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
+
+/**
+ * @author gaohang on 7/9/17.
+ */
+public class PostFactoryBeanModuleLoadListener implements ModuleLoadListener {
+
+  public void beforeModuleLoad(ModuleConfig moduleConfig, ModuleApplicationContext applicationContext) {
+    applicationContext.addBeanFactoryPostProcessor(new BeanDefinitionRegistryPostProcessor() {
+      public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
+        //do something
+      }
+
+      public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+        //do something
+      }
+    });
+  }
+
+  public void afterModuleLoad(ModuleConfig moduleConfig, ModuleApplicationContext applicationContext) {
+
+  }
+}
+```
+
+### 扩展点接口
+有时候,一个模块中需要使用的接口的实现不由此模块决定,比如数据访问模块需要使用DataSource,而DataSource由集成此模块的系统主模块决定.
+需要通过一种扩展机制,将数据源注入到模块中,在modular-spring中支持扩展点接口,可以将一个接口声明为扩展点,在其它模块中声明接口的实现bean来达到扩展的目的.
+例如声明数据源为扩展点:
+```xml
+<modular:extension name="dataSource" interface="javax.sql.DataSource"/>
+```
+在系统主模块中,提供扩展点提实现:
+```xml
+  <bean name="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource"/>
+  <modular:extension-point extension-name="dataSource" ref="dataSource"/>
+```
 ### 后续计划
 * 检测模块之间的环形依赖
-* 模块支持扩展点,比如数据访问模块依赖的数据源在拼装系统时,由系统的主模块指定
 * 扩展springmvc,支持controller的模块化
