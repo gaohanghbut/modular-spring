@@ -192,5 +192,24 @@ public class PostFactoryBeanModuleLoadListener implements ModuleLoadListener {
   <bean name="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource"/>
   <modular:extension-point extension-name="dataSource" ref="dataSource"/>
 ```
+### springmvc对controller的模块化
+在web.xml中配置servlet
+```xml
+<servlet>
+    <servlet-name>web</servlet-name>
+    <servlet-class>cn.yxffcode.modularspring.webmvc.ModularDispatcherServlet</servlet-class>
+    <init-param>
+        <param-name>webModuleNamePrefix</param-name>
+        <param-value>cn.yxffcode.test.web</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+</servlet>
+<servlet-mapping>
+    <servlet-name>web</servlet-name>
+    <url-pattern>*.json</url-pattern>
+</servlet-mapping>
+```
+配置后，controller可以在不同的模块中，参数webModuleNamePrefix表示所有controller的模块名的共同前缀,
+目前只支持通过@ResponseBody返回json，还不支持jsp/html按模块做神力渲染
 ### 后续计划
-* 扩展springmvc,支持controller的模块化
+* 扩展springmvc,支持视图渲染的模块化
