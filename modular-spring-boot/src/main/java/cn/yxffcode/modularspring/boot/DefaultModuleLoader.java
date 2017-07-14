@@ -19,9 +19,7 @@ import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.support.AbstractRefreshableApplicationContext;
 import org.springframework.util.CollectionUtils;
 
 import java.io.File;
@@ -57,7 +55,7 @@ public class DefaultModuleLoader implements ModuleLoader {
     for (ModuleConfig moduleConfig : topological) {
       final ModuleApplicationContext applicationContext = applicationContexts.get(moduleConfig);
       if (applicationContext instanceof ConfigurableApplicationContext) {
-        ModuleLoadContextHolder.setLoadingModulePath(moduleConfigs.inverse().get(moduleConfig));
+        attachModulePath(moduleConfigs, moduleConfig);
         final Stopwatch stopwatch = Stopwatch.createStarted();
         invokeBeforeRefresh(moduleConfig, applicationContext);
         applicationContext.refresh();
@@ -68,6 +66,17 @@ public class DefaultModuleLoader implements ModuleLoader {
     }
     ModuleLoadContextHolder.clean();
     return applicationContexts;
+  }
+
+  private void attachModulePath(BiMap<String, ModuleConfig> moduleConfigs, ModuleConfig moduleConfig) {
+    final String loadingModulePath = moduleConfigs.inverse().get(moduleConfig);
+    if (loadingModulePath.startsWith("jar:")) {
+      ModuleLoadContextHolder.setLoadingModulePath(loadingModulePath.substring("jar:".length()));
+    } else if (loadingModulePath.startsWith("file:")) {
+      ModuleLoadContextHolder.setLoadingModulePath(loadingModulePath.substring("file:".length()));
+    } else {
+      ModuleLoadContextHolder.setLoadingModulePath(loadingModulePath);
+    }
   }
 
   private void invokeAfterRefresh(ModuleConfig moduleConfig, ModuleApplicationContext applicationContext) {

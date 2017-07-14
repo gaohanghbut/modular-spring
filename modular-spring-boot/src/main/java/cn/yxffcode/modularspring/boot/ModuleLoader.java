@@ -1,5 +1,6 @@
 package cn.yxffcode.modularspring.boot;
 
+import cn.yxffcode.modularspring.boot.listener.ApplicationStartupCallback;
 import cn.yxffcode.modularspring.boot.listener.ModuleLoadListener;
 import cn.yxffcode.modularspring.core.context.ModuleApplicationContext;
 import org.springframework.context.ApplicationContext;
