@@ -209,7 +209,23 @@ public class PostFactoryBeanModuleLoadListener implements ModuleLoadListener {
     <url-pattern>*.json</url-pattern>
 </servlet-mapping>
 ```
+约定名词模块的simpleName：假如controller所在的模块名为cn.xxx.web.home，
+cn.xxx.web是在ModularDispatcherServlet中配置的webModuleNamePrefix,则模块的simpleName是home
+
 配置后，controller可以在不同的模块中，参数webModuleNamePrefix表示所有controller的模块名的共同前缀,
-目前只支持通过@ResponseBody返回json，还不支持jsp/html按模块做神力渲染
-### 后续计划
-* 扩展springmvc,支持视图渲染的模块化
+请求的url和视图渲染会有一定的变化，url会自动加上模块的simpleName，例如:
+```java
+@RequestMapping("/")
+@Controller
+public class HomeController {
+
+  @ModularReference
+  private TestService testService;
+
+  @RequestMapping(value = "index", method = RequestMethod.GET)
+  public String index() {
+    return "index.html";
+  }
+}
+```
+则index的正确访问方式是/home/index.json，而返回的"index.html"的路径是/home/index.html
