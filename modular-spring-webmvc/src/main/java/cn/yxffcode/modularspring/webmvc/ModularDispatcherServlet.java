@@ -58,6 +58,7 @@ public class ModularDispatcherServlet extends DispatcherServlet {
     WebApplicationContext commonApplicationContext = null;
     if (StringUtils.isNotBlank(commonSpringConfig)) {
       final XmlWebApplicationContext ctx = new XmlWebApplicationContext();
+      ctx.setServletContext(getServletContext());
       ctx.setConfigLocation(commonSpringConfig);
       ctx.refresh();
       commonApplicationContext = ctx;
