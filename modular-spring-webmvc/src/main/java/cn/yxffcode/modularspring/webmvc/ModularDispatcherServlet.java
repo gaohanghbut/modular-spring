@@ -5,6 +5,7 @@ import cn.yxffcode.modularspring.boot.ModuleConfig;
 import cn.yxffcode.modularspring.boot.listener.ModuleLoadListener;
 import cn.yxffcode.modularspring.core.context.ModuleApplicationContext;
 import cn.yxffcode.modularspring.webmvc.boot.WebappModuleLoader;
+import cn.yxffcode.modularspring.webmvc.request.ModuleRequestMappingHandlerMapping;
 import com.google.common.base.Predicate;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.support.RootBeanDefinition;

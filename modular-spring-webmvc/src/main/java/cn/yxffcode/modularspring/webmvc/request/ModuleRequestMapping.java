@@ -1,4 +1,4 @@
-package cn.yxffcode.modularspring.webmvc;
+package cn.yxffcode.modularspring.webmvc.request;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;

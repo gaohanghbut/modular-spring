@@ -1,4 +1,4 @@
-package cn.yxffcode.modularspring.webmvc;
+package cn.yxffcode.modularspring.webmvc.request;
 
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
