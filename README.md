@@ -1,5 +1,5 @@
 # modular-spring
-利用spring实现工程的模块化
+Spring框架是一把灵活锋利的瑞士军刀，这里通过扩展Spring，实现工程的模块化。设计文档见issues:https://github.com/gaohanghbut/modular-spring/issues
 
 ## 模块化
 面向对象中的封装是指利用抽象数据类型将数据和基于数据的操作封装在一起，
