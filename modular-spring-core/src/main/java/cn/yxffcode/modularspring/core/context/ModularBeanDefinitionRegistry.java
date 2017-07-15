@@ -37,6 +37,13 @@ public class ModularBeanDefinitionRegistry implements BeanDefinitionRegistry {
     //check if this bean is a modular service
     final String beanClassName = beanDefinition.getBeanClassName();
     final Class<?> beanClass = getServiceBeanClass(beanClassName);
+    registerServiceBeanIfNeed(beanName, beanClass);
+
+    //reference
+    registerServiceReferenceIfNeed(beanClass);
+  }
+
+  private void registerServiceBeanIfNeed(String beanName, Class<?> beanClass) {
     final ModularService modularService = beanClass.getDeclaredAnnotation(ModularService.class);
     if (modularService != null) {
       Class<?> serviceInterface = modularService.interfaceClass();
@@ -52,8 +59,9 @@ public class ModularBeanDefinitionRegistry implements BeanDefinitionRegistry {
       final RootBeanDefinition rootBeanDefinition = ModularBeanUtils.buildServiceBean(beanName, serviceInterface.getName(), uniqueId);
       delegate.registerBeanDefinition(beanNameGenerator.generateBeanName(rootBeanDefinition, delegate), rootBeanDefinition);
     }
+  }
 
-    //reference
+  private void registerServiceReferenceIfNeed(Class<?> beanClass) {
     final Field[] declaredFields = beanClass.getDeclaredFields();
     if (ArrayUtils.isEmpty(declaredFields)) {
       return;
