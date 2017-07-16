@@ -1,5 +1,7 @@
-package cn.yxffcode.modularspring.core;
+package cn.yxffcode.modularspring.core.config;
 
+import cn.yxffcode.modularspring.core.ServiceBean;
+import cn.yxffcode.modularspring.core.ServiceReference;
 import com.google.common.base.Strings;
 import org.springframework.beans.factory.config.RuntimeBeanNameReference;
 import org.springframework.beans.factory.support.RootBeanDefinition;

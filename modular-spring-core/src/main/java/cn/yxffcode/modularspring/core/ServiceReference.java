@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
 /**
  * @author gaohang on 6/24/17.
  */
-public final class ServiceReference implements FactoryBean<Object> {
+public class ServiceReference implements FactoryBean<Object> {
   private final Class<?> targetClass;
   private final String uniqueId;
 
@@ -56,5 +56,9 @@ public final class ServiceReference implements FactoryBean<Object> {
   @Override
   public boolean isSingleton() {
     return true;
+  }
+
+  public String getUniqueId() {
+    return uniqueId;
   }
 }

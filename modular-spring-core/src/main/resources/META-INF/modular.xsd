@@ -56,4 +56,28 @@
     </xsd:complexType>
   </xsd:element>
 
+  <xsd:element name="auto-stub">
+    <xsd:annotation>
+      <xsd:documentation>
+        用于引用其它模块的服务时的打桩，对于服务尚未实现的时候，此功能可对服务自动代理，如果服务已经发布，则不做代理
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="active" type="xsd:boolean" default="true"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="stub">
+    <xsd:annotation>
+      <xsd:documentation>
+        对服务接口做自动代理
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="interface" type="xsd:string" use="required"/>
+      <xsd:attribute name="invocation-handler" type="xsd:string" use="optional"/>
+      <xsd:attribute name="invocation-handler-ref" type="xsd:string" use="optional"/>
+    </xsd:complexType>
+  </xsd:element>
+
 </xsd:schema>

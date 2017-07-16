@@ -1,6 +1,6 @@
 package cn.yxffcode.modularspring.core.context;
 
-import cn.yxffcode.modularspring.core.ModularBeanUtils;
+import cn.yxffcode.modularspring.core.config.ModularBeanUtils;
 import cn.yxffcode.modularspring.core.ServiceDeclarationException;
 import cn.yxffcode.modularspring.core.annotation.ModularReference;
 import cn.yxffcode.modularspring.core.annotation.ModularService;
