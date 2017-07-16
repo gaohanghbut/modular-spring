@@ -387,7 +387,7 @@ spring支持自定义命名空间，每个命名空间对应一个xsd文件和�
 需要自定义命名空间则需要按照spring的规范提供xsd文件和NamespaceHandler的实现。例如
 modular-spring-core中的自定义标签实现：
 
-![modular-spring-core-xmlns](img/modular-spring-core-xmlns.png)
+![modular-spring-core-xmlns](docs/img/modular-spring-core-xmlns.png)
 
 * modular.xds文件中是对modular:service和modular:reference标签的定义
 * spring.handlers中是命名空间和NamespaceHandler之间的对应关系
