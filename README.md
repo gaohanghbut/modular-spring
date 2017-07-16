@@ -80,6 +80,20 @@ modular:service表示服务接口的暴露,意味着此接口能被其它模块�
 modular:reference表示引用一个服务,如果此模块对引用的服务有初始化依赖,则需要在module.json文件中配置模块
 依赖,即将服务所在的模块名配置到此模块的dependenceModules中.
 
+## 服务引用的自动代理
+在开发模块时，如果模块依赖其它模块的服务，而服务尚未实现或服务提供模块尚未集成进来，可以给服务的引用加上代理，让模块
+能正常工作，可以使用auto-stub标签打开服务引用自动代理功能。
+```xml
+<modular:auto-stub/>
+```
+auto-stub标签在modular:reference的基础上加了一层检查，如果引用的服务不存在，则使用代理对象代替服务对象.
+可以通过stub标签定义服务引用代理对象的InvocationHandler。
+```xml
+<modular:stub interface="cn.yxffcode.modularspring.service.TestStubService"
+              invocation-handler="cn.yxffcode.modularspring.test.TestStubInvocationHandler"/>
+```
+可以使用invocation-handler-ref指定一个bean的name来代替invocation-handler，如果invocation-handler和
+invocation-handler-ref都没有指定，则使用默认stub，默认stub将所有的方法调用都返回null。
 ## 注解
 ### 发布服务
 可使用@ModularService发布服务,使用ModularService标记的bean会被spring托管,并作为模块的服务发布,例如:
@@ -143,7 +157,7 @@ public class TestCoreService implements InitializingBean {
 ```
 ### 使用modular:component-scan
 待实现
-### 模块加载的前置处理和后置处理
+## 模块加载的前置处理和后置处理
 通过ModuleLoadListener接口可以对模块加载做前置处理或者后置处理,例如想要在模块加载前向模块中添加某些Bean,
 可以在ModuleLoadListener中对spring注册BeanDefinitionRegistryPostProcessor:
 ```java
