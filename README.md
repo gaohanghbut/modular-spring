@@ -94,6 +94,8 @@ auto-stub标签在modular:reference的基础上加了一层检查，如果引用
 ```
 可以使用invocation-handler-ref指定一个bean的name来代替invocation-handler，如果invocation-handler和
 invocation-handler-ref都没有指定，则使用默认stub，默认stub将所有的方法调用都返回null。
+
+开启auto-stub功能后，服务引用接口的stub是可选的，如果没有配置，则和原有逻辑一样，找不到服务提供对象会出错
 ## 注解
 ### 发布服务
 可使用@ModularService发布服务,使用ModularService标记的bean会被spring托管,并作为模块的服务发布,例如:
