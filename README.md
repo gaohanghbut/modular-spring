@@ -192,7 +192,7 @@ public class PostFactoryBeanModuleLoadListener implements ModuleLoadListener {
   <bean name="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource"/>
   <modular:extension-point extension-name="dataSource" ref="dataSource"/>
 ```
-### springmvc对controller的模块化
+## springmvc对controller的模块化
 在web.xml中配置servlet
 ```xml
 <servlet>
