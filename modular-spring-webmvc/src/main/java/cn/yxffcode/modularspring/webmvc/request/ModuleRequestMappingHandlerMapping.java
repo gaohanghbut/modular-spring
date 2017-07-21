@@ -7,11 +7,14 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.method.HandlerMethodSelector;
+import org.springframework.web.servlet.handler.MappedInterceptor;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -116,6 +119,17 @@ public class ModuleRequestMappingHandlerMapping extends RequestMappingHandlerMap
     return (this.detectHandlerMethodsInAncestorContexts ?
         BeanFactoryUtils.beanNamesForTypeIncludingAncestors(applicationContext, Object.class) :
         applicationContext.getBeanNamesForType(Object.class));
+  }
+
+  @Override
+  protected void detectMappedInterceptors(List<MappedInterceptor> mappedInterceptors) {
+    final Collection<ApplicationContext> values = BeanFactoryUtils.beansOfTypeIncludingAncestors(
+        getApplicationContext(), ApplicationContext.class, true, false).values();
+    for (ApplicationContext value : values) {
+      mappedInterceptors.addAll(
+          BeanFactoryUtils.beansOfTypeIncludingAncestors(
+              value, MappedInterceptor.class, true, false).values());
+    }
   }
 
 
