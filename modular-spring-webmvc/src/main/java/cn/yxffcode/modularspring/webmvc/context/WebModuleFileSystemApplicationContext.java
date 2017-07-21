@@ -20,6 +20,12 @@ public class WebModuleFileSystemApplicationContext extends ModuleFileSystemAppli
   }
 
   @Override
+  protected void preProcessBeforeRefresh() {
+    super.preProcessBeforeRefresh();
+    addBeanFactoryPostProcessor(new MappedInterceptorNormalizer());
+  }
+
+  @Override
   public ServletContext getServletContext() {
     return servletContext;
   }

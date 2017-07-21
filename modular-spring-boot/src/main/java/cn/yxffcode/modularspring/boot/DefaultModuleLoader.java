@@ -77,6 +77,7 @@ public class DefaultModuleLoader implements ModuleLoader {
     } else {
       ModuleLoadContextHolder.setLoadingModulePath(loadingModulePath);
     }
+    ModuleLoadContextHolder.setLoadingModuleConfig(moduleConfig);
   }
 
   private void invokeAfterRefresh(ModuleConfig moduleConfig, ModuleApplicationContext applicationContext) {

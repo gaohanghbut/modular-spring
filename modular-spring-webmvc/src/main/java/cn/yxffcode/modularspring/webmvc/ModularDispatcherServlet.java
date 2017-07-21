@@ -3,6 +3,7 @@ package cn.yxffcode.modularspring.webmvc;
 import cn.yxffcode.modularspring.boot.Lifecycle;
 import cn.yxffcode.modularspring.boot.ModuleConfig;
 import cn.yxffcode.modularspring.boot.listener.ModuleLoadListener;
+import cn.yxffcode.modularspring.boot.utils.ModuleUtils;
 import cn.yxffcode.modularspring.core.context.ModuleApplicationContext;
 import cn.yxffcode.modularspring.webmvc.boot.WebappModuleLoader;
 import cn.yxffcode.modularspring.webmvc.request.ModuleRequestMappingHandlerMapping;
@@ -126,11 +127,9 @@ public class ModularDispatcherServlet extends DispatcherServlet {
       if (!webModulePredicate.apply(moduleConfig)) {
         return;
       }
-      final String moduleName = moduleConfig.getModuleName();
-      final int i = moduleName.lastIndexOf('.');
-      final String contextBeanName = i < 0 ? moduleName : moduleName.substring(i + 1);
+      final String contextBeanName = ModuleUtils.getSimpleModuleName(moduleConfig);
       if (StringUtils.isBlank(contextBeanName)) {
-        throw new IllegalStateException("web模块的模块名不合法, 模块名:" + moduleName);
+        throw new IllegalStateException("web模块的模块名不合法, 模块名:" + moduleConfig.getModuleName());
       }
       final RootBeanDefinition rootBeanDefinition = new RootBeanDefinition();
       rootBeanDefinition.setBeanClass(ModuleApplicationContextBean.class);
@@ -138,4 +137,5 @@ public class ModularDispatcherServlet extends DispatcherServlet {
       wac.registerBeanDefinition(contextBeanName, rootBeanDefinition);
     }
   }
+
 }

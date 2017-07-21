@@ -19,6 +19,12 @@ public class WebModuleJarEntryXmlApplicationContext extends ModuleJarEntryXmlApp
   }
 
   @Override
+  protected void preProcessBeforeRefresh() {
+    super.preProcessBeforeRefresh();
+    addBeanFactoryPostProcessor(new MappedInterceptorNormalizer());
+  }
+
+  @Override
   public ServletContext getServletContext() {
     return servletContext;
   }

@@ -19,6 +19,7 @@ abstract class AbstractModuleApplicationContext extends AbstractXmlApplicationCo
   public AbstractModuleApplicationContext(ApplicationContext parent, String moduleName) {
     super(parent);
     this.moduleName = moduleName;
+    preProcessBeforeRefresh();
   }
 
   @Override
@@ -32,6 +33,9 @@ abstract class AbstractModuleApplicationContext extends AbstractXmlApplicationCo
 
     initBeanDefinitionReader(beanDefinitionReader);
     loadBeanDefinitions(beanDefinitionReader);
+  }
+
+  protected void preProcessBeforeRefresh() {
   }
 
   @Override
