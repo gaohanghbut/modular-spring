@@ -4,7 +4,6 @@ import cn.yxffcode.modularspring.core.context.DefaultModuleApplicationContext;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.ui.context.Theme;
 import org.springframework.ui.context.ThemeSource;
@@ -13,7 +12,6 @@ import org.springframework.web.context.ConfigurableWebEnvironment;
 import org.springframework.web.context.ServletConfigAware;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.context.support.ServletContextAwareProcessor;
-import org.springframework.web.context.support.ServletContextResource;
 import org.springframework.web.context.support.ServletContextResourcePatternResolver;
 import org.springframework.web.context.support.StandardServletEnvironment;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -26,6 +24,7 @@ import javax.servlet.ServletContext;
  */
 public class DefaultWebModuleApplicationContext extends DefaultModuleApplicationContext implements ThemeSource {
 
+  private static final String DEFAULT_VIEW_RESOLVER_REGISTRY_BEAN = "defaultViewResolverRegistryBean";
   private ServletContext servletContext;
 
   private ServletConfig servletConfig;
@@ -99,16 +98,6 @@ public class DefaultWebModuleApplicationContext extends DefaultModuleApplication
 
     WebApplicationContextUtils.registerWebApplicationScopes(beanFactory, this.servletContext);
     WebApplicationContextUtils.registerEnvironmentBeans(beanFactory, this.servletContext, this.servletConfig);
-  }
-
-  /**
-   * This implementation supports file paths beneath the root of the ServletContext.
-   *
-   * @see ServletContextResource
-   */
-  @Override
-  protected Resource getResourceByPath(String path) {
-    return new ServletContextResource(this.servletContext, path);
   }
 
   /**

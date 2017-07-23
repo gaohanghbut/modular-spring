@@ -45,12 +45,12 @@ public class DefaultModuleApplicationContext extends AbstractXmlApplicationConte
   }
 
   @Override
-  protected Resource getResourceByPath(String path) {
-    if (path.startsWith("jar:")) {
-      return new JarEntryResource(path);
-    }
+  protected final Resource getResourceByPath(String path) {
     if (path != null && path.startsWith("/")) {
       path = path.substring(1);
+    }
+    if (path.startsWith("jar:")) {
+      return new JarEntryResource(path);
     }
     return new FileSystemResource(path);
   }

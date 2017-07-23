@@ -7,6 +7,7 @@ import cn.yxffcode.modularspring.boot.utils.ModuleUtils;
 import cn.yxffcode.modularspring.core.context.ModuleApplicationContext;
 import cn.yxffcode.modularspring.webmvc.boot.WebappModuleLoader;
 import cn.yxffcode.modularspring.webmvc.request.ModuleRequestMappingHandlerMapping;
+import cn.yxffcode.modularspring.webmvc.view.ModuleResourceViewResolver;
 import com.google.common.base.Predicate;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.support.RootBeanDefinition;
@@ -43,6 +44,9 @@ public class ModularDispatcherServlet extends DispatcherServlet {
     final WebApplicationContext commonApplicationContext = createCommonComponentApplicationContext();
 
     final GenericWebApplicationContext wac = new GenericWebApplicationContext(getServletContext());
+    if (commonApplicationContext != null) {
+      wac.setParent(commonApplicationContext);
+    }
     modularLifecycle.addModuleLoadListener(new WebModuleRegistryListener(webModulePredicate, wac, commonApplicationContext));
     modularLifecycle.boot();
 
@@ -50,8 +54,18 @@ public class ModularDispatcherServlet extends DispatcherServlet {
 
     registerHandlerAdapter(wac);
 
+    //register view resolver
+    registerViewResolver(wac);
+
     wac.refresh();
     return wac;
+  }
+
+  private void registerViewResolver(GenericWebApplicationContext wac) {
+    if (!wac.containsBean(VIEW_RESOLVER_BEAN_NAME)) {
+      final RootBeanDefinition def = new RootBeanDefinition(ModuleResourceViewResolver.class);
+      wac.registerBeanDefinition(VIEW_RESOLVER_BEAN_NAME, def);
+    }
   }
 
   private WebApplicationContext createCommonComponentApplicationContext() {

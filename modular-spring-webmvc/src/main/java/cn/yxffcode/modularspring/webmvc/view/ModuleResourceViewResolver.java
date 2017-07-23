@@ -1,7 +1,6 @@
 package cn.yxffcode.modularspring.webmvc.view;
 
-import cn.yxffcode.modularspring.core.context.ModuleApplicationContext;
-import org.springframework.beans.factory.InitializingBean;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -9,7 +8,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 /**
  * @author gaohang on 7/23/17.
  */
-public class ModuleResourceViewResolver extends InternalResourceViewResolver implements InitializingBean {
+public class ModuleResourceViewResolver extends InternalResourceViewResolver {
 
   /**
    * 前端页面文件(jsp/html)的默认目录
@@ -17,26 +16,26 @@ public class ModuleResourceViewResolver extends InternalResourceViewResolver imp
   private static final String DEFAULT_VIEW_BASE_DIR = "view";
 
   private String viewBaseDir;
-  /**
-   * 表示此ViewResolver是否是针对单个模块
-   */
-  private boolean isModuleViewResolver;
+
+  public ModuleResourceViewResolver() {
+    this(DEFAULT_VIEW_BASE_DIR);
+  }
+
+  public ModuleResourceViewResolver(String viewBaseDir) {
+    setViewBaseDir(viewBaseDir);
+    setPrefix(null);
+  }
 
   @Override
   public void setPrefix(String prefix) {
-    if (!isModuleViewResolver || isBlank(viewBaseDir)) {
-      super.setPrefix(prefix);
+    if (StringUtils.isBlank(prefix)) {
+      super.setPrefix(viewBaseDir + '/');
       return;
     }
-    super.setPrefix(viewBaseDir + prefix);
+    super.setPrefix(viewBaseDir + '/' + prefix);
   }
 
-  @Override
-  public void afterPropertiesSet() throws Exception {
-    this.isModuleViewResolver = getApplicationContext() instanceof ModuleApplicationContext;
-  }
-
-  public void setViewBaseDir(String viewBaseDir) {
+  private void setViewBaseDir(String viewBaseDir) {
     if (isBlank(viewBaseDir)) {
       this.viewBaseDir = DEFAULT_VIEW_BASE_DIR;
       return;
