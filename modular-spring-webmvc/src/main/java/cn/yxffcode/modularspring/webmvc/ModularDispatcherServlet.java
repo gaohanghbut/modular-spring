@@ -35,7 +35,7 @@ public class ModularDispatcherServlet extends DispatcherServlet {
   protected WebApplicationContext createWebApplicationContext(ApplicationContext parent) {
 
     final WebModulePredicate webModulePredicate = new WebModulePredicate(getServletConfig().getInitParameter(WEB_APP_MODULE_PATTERN));
-    final Lifecycle modularLifecycle = new Lifecycle(new WebappModuleLoader(getServletContext(), webModulePredicate));
+    final Lifecycle modularLifecycle = new Lifecycle(new WebappModuleLoader(getServletContext(), getServletConfig(), webModulePredicate));
 
     this.modularLifecycle = modularLifecycle;
 

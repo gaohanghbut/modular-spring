@@ -1,11 +1,13 @@
 package cn.yxffcode.modularspring.core.context;
 
+import cn.yxffcode.modularspring.core.io.JarEntryResource;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.ResourceEntityResolver;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;
@@ -13,13 +15,17 @@ import java.io.IOException;
 /**
  * @author gaohang on 7/9/17.
  */
-abstract class AbstractModuleApplicationContext extends AbstractXmlApplicationContext implements ModuleApplicationContext {
+public class DefaultModuleApplicationContext extends AbstractXmlApplicationContext implements ModuleApplicationContext {
   protected final String moduleName;
 
-  public AbstractModuleApplicationContext(ApplicationContext parent, String moduleName) {
+  public DefaultModuleApplicationContext(String[] configLocations, boolean refresh,
+                                         ApplicationContext parent, String moduleName) {
     super(parent);
     this.moduleName = moduleName;
-    preProcessBeforeRefresh();
+    setConfigLocations(configLocations);
+    if (refresh) {
+      refresh();
+    }
   }
 
   @Override
@@ -39,7 +45,15 @@ abstract class AbstractModuleApplicationContext extends AbstractXmlApplicationCo
   }
 
   @Override
-  protected abstract Resource getResourceByPath(String path);
+  protected Resource getResourceByPath(String path) {
+    if (path.startsWith("jar:")) {
+      return new JarEntryResource(path);
+    }
+    if (path != null && path.startsWith("/")) {
+      path = path.substring(1);
+    }
+    return new FileSystemResource(path);
+  }
 
   @Override
   public String getModuleName() {

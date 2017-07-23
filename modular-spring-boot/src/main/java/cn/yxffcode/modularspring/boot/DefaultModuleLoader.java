@@ -3,9 +3,8 @@ package cn.yxffcode.modularspring.boot;
 import cn.yxffcode.modularspring.boot.graph.DirectedAcyclicGraph;
 import cn.yxffcode.modularspring.boot.listener.ModuleLoadListener;
 import cn.yxffcode.modularspring.boot.utils.ModuleLoadContextHolder;
+import cn.yxffcode.modularspring.core.context.DefaultModuleApplicationContext;
 import cn.yxffcode.modularspring.core.context.ModuleApplicationContext;
-import cn.yxffcode.modularspring.core.context.ModuleFileSystemApplicationContext;
-import cn.yxffcode.modularspring.core.context.ModuleJarEntryXmlApplicationContext;
 import cn.yxffcode.modularspring.core.io.ClasspathScanner;
 import cn.yxffcode.modularspring.core.io.JarEntryReader;
 import com.alibaba.fastjson.JSON;
@@ -113,20 +112,15 @@ public class DefaultModuleLoader implements ModuleLoader {
 
       final String[] configs = new String[springConfigs.size()];
       springConfigs.toArray(configs);
-      final ModuleApplicationContext applicationContext = createModuleApplicationContext(moduleConfig, configs, moduleConfig.getModuleName());
+      final ModuleApplicationContext applicationContext = createModuleApplicationContext(moduleConfig, configs);
       applicationContexts.put(moduleConfig, applicationContext);
     }
     return applicationContexts;
   }
 
-  protected ModuleApplicationContext createModuleApplicationContext(ModuleConfig moduleConfig, String[] configs, String moduleName) {
-    ModuleApplicationContext applicationContext;
-    if (moduleConfig.isFromFile()) {
-      applicationContext = new ModuleFileSystemApplicationContext(configs, false, null, moduleName);
-    } else {
-      applicationContext = new ModuleJarEntryXmlApplicationContext(configs, false, null, moduleName);
-    }
-    return applicationContext;
+  protected ModuleApplicationContext createModuleApplicationContext(ModuleConfig moduleConfig, String[] configs) {
+    return new DefaultModuleApplicationContext(configs,
+        false, null, moduleConfig.getModuleName());
   }
 
   protected BiMap<String, ModuleConfig> resolveModuleJsonConfigs(ClassLoader classLoader) throws IOException {

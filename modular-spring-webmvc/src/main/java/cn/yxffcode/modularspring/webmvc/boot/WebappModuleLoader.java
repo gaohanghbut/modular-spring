@@ -2,12 +2,12 @@ package cn.yxffcode.modularspring.webmvc.boot;
 
 import cn.yxffcode.modularspring.boot.DefaultModuleLoader;
 import cn.yxffcode.modularspring.boot.ModuleConfig;
+import cn.yxffcode.modularspring.core.context.DefaultModuleApplicationContext;
 import cn.yxffcode.modularspring.core.context.ModuleApplicationContext;
-import cn.yxffcode.modularspring.core.context.ModuleJarEntryXmlApplicationContext;
-import cn.yxffcode.modularspring.webmvc.context.WebModuleFileSystemApplicationContext;
-import cn.yxffcode.modularspring.webmvc.context.WebModuleJarEntryXmlApplicationContext;
+import cn.yxffcode.modularspring.webmvc.context.DefaultWebModuleApplicationContext;
 import com.google.common.base.Predicate;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
 /**
@@ -18,23 +18,23 @@ import javax.servlet.ServletContext;
 public class WebappModuleLoader extends DefaultModuleLoader {
   private final ServletContext servletContext;
   private final Predicate<ModuleConfig> webModulePredicate;
+  private final ServletConfig servletConfig;
 
-  public WebappModuleLoader(ServletContext servletContext, Predicate<ModuleConfig> webModulePredicate) {
+  public WebappModuleLoader(ServletContext servletContext, ServletConfig servletConfig, Predicate<ModuleConfig> webModulePredicate) {
     this.servletContext = servletContext;
     this.webModulePredicate = webModulePredicate;
+    this.servletConfig = servletConfig;
   }
 
   @Override
-  protected ModuleApplicationContext createModuleApplicationContext(ModuleConfig moduleConfig, String[] configs, String moduleName) {
+  protected ModuleApplicationContext createModuleApplicationContext(ModuleConfig moduleConfig, String[] configs) {
     if (!webModulePredicate.apply(moduleConfig)) {
-      return super.createModuleApplicationContext(moduleConfig, configs, moduleName);
+      return new DefaultModuleApplicationContext(configs, false, null, moduleConfig.getModuleName());
     }
-    ModuleApplicationContext applicationContext;
-    if (moduleConfig.isFromFile()) {
-      applicationContext = new WebModuleFileSystemApplicationContext(configs, false, null, moduleName, servletContext);
-    } else {
-      applicationContext = new WebModuleJarEntryXmlApplicationContext(configs, false, null, moduleName, servletContext);
-    }
+    DefaultWebModuleApplicationContext applicationContext = new DefaultWebModuleApplicationContext(
+        configs, false, null, moduleConfig.getModuleName());
+    applicationContext.setServletContext(servletContext);
+    applicationContext.setServletConfig(servletConfig);
     return applicationContext;
   }
 }

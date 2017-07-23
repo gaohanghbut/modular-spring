@@ -10,7 +10,11 @@ public final class ModuleUtils {
   }
 
   public static String getSimpleModuleName(ModuleConfig moduleConfig) {
-    final int i = moduleConfig.getModuleName().lastIndexOf('.');
-    return i < 0 ? moduleConfig.getModuleName() : moduleConfig.getModuleName().substring(i + 1);
+    return getSimpleModuleName(moduleConfig.getModuleName());
+  }
+
+  public static String getSimpleModuleName(String moduleName) {
+    final int i = moduleName.lastIndexOf('.');
+    return i < 0 ? moduleName : moduleName.substring(i + 1);
   }
 }
