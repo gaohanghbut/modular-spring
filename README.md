@@ -208,7 +208,8 @@ public class PostFactoryBeanModuleLoadListener implements ModuleLoadListener {
   <bean name="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource"/>
   <modular:extension-point extension-name="dataSource" ref="dataSource"/>
 ```
-## springmvc对controller的模块化
+## webmvc
+### springmvc对controller的模块化
 在web.xml中配置servlet
 ```xml
 <servlet>
@@ -245,6 +246,60 @@ public class HomeController {
 }
 ```
 则index的正确访问方式是/home/index.json，而返回的"index.html"的路径是/home/index.html
+### webmvc的公共ApplicationContext;
+ModularDispatcherServlet会创建一个ApplicationContext用于配置各controller模块需要的公共组件。
+比如可以将公共的视图渲染器或者文件上传的配置写在此公共的ApplicationContext中，使用方式很简单，给ModularDispatcherServlet
+指定参数commonApplicationContext表示公共的applicationContext.xml的位置，如：
+```xml
+  <servlet>
+    <servlet-name>web</servlet-name>
+    <servlet-class>cn.yxffcode.modularspring.webmvc.ModularDispatcherServlet</servlet-class>
+    <init-param>
+      <param-name>webModuleNamePrefix</param-name>
+      <param-value>cn.yxffcode.test.web</param-value>
+    </init-param>
+    <init-param>
+      <param-name>commonApplicationContext</param-name>
+      <param-value>/WEB-INF/applicationContext.xml</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>web</servlet-name>
+    <url-pattern>*.json</url-pattern>
+  </servlet-mapping>
+```
+
+### 对拦截器的支持
+controller层实现模块化后，springmvc支持的拦截器有两种使用形式
+* 在各个模块中单独配置 
+     
+        这种实现方式会自动在拦截器的url前拼上/$simpleModuleName.
+        
+    例如在home模块中配置拦截器：
+    ```xml
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/index.json"/>
+            <bean class="cn.yxffcode.test.web.home.TestHandlerIntercepter"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+    ```
+    拦截器会拦截/home/index.json请求
+* 在webmvc的公共组件容器中配置
+        
+        这种方式与非模块化的方式使用无异。
+        
+    例如在commonApplicationContext中配置拦截器：
+    ```xml
+      <mvc:interceptors>
+        <mvc:interceptor>
+          <mvc:mapping path="/home/index.json"/>
+          <bean class="cn.yxffcode.test.TestHandlerIntercepter"/>
+        </mvc:interceptor>
+      </mvc:interceptors>
+    ```
+    
 
 ## 模块化工程结构参考
 

@@ -130,6 +130,10 @@ public class ModuleRequestMappingHandlerMapping extends RequestMappingHandlerMap
           BeanFactoryUtils.beansOfTypeIncludingAncestors(
               value, MappedInterceptor.class, true, false).values());
     }
+    //支持commonApplicationContext中配置拦截器
+    mappedInterceptors.addAll(
+        BeanFactoryUtils.beansOfTypeIncludingAncestors(
+            getApplicationContext(), MappedInterceptor.class, true, false).values());
   }
 
 
