@@ -32,10 +32,17 @@ public class ModularDispatcherServlet extends DispatcherServlet {
 
   private Lifecycle modularLifecycle;
 
+  private String webModuleNamePrefix;
+  private String commonApplicationContext;
+
   @Override
   protected WebApplicationContext createWebApplicationContext(ApplicationContext parent) {
 
-    final WebModulePredicate webModulePredicate = new WebModulePredicate(getServletConfig().getInitParameter(WEB_APP_MODULE_PATTERN));
+    final WebModulePredicate webModulePredicate = new WebModulePredicate(
+        StringUtils.isBlank(webModuleNamePrefix)
+            ? getServletConfig().getInitParameter(WEB_APP_MODULE_PATTERN)
+            : webModuleNamePrefix
+    );
     final Lifecycle modularLifecycle = new Lifecycle(new WebappModuleLoader(getServletContext(), getServletConfig(), webModulePredicate));
 
     this.modularLifecycle = modularLifecycle;
@@ -69,7 +76,9 @@ public class ModularDispatcherServlet extends DispatcherServlet {
   }
 
   private WebApplicationContext createCommonComponentApplicationContext() {
-    final String commonSpringConfig = getServletConfig().getInitParameter(COMMON_COMPONENT_PATH);
+    final String commonSpringConfig = StringUtils.isBlank(commonApplicationContext)
+        ? getServletConfig().getInitParameter(COMMON_COMPONENT_PATH)
+        : commonApplicationContext;
     WebApplicationContext commonApplicationContext = null;
     if (StringUtils.isNotBlank(commonSpringConfig)) {
       final XmlWebApplicationContext ctx = new XmlWebApplicationContext();
@@ -152,4 +161,19 @@ public class ModularDispatcherServlet extends DispatcherServlet {
     }
   }
 
+  public String getWebModuleNamePrefix() {
+    return webModuleNamePrefix;
+  }
+
+  public void setWebModuleNamePrefix(String webModuleNamePrefix) {
+    this.webModuleNamePrefix = webModuleNamePrefix;
+  }
+
+  public String getCommonApplicationContext() {
+    return commonApplicationContext;
+  }
+
+  public void setCommonApplicationContext(String commonApplicationContext) {
+    this.commonApplicationContext = commonApplicationContext;
+  }
 }
