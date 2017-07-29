@@ -33,6 +33,11 @@ class ModuleRequestMapping implements RequestMapping {
   }
 
   @Override
+  public String[] path() {
+    return moduleNames;
+  }
+
+  @Override
   public RequestMethod[] method() {
     return EMPTY_REQUEST_METHOD_ARRAY;
   }

@@ -7,6 +7,7 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.method.HandlerMethodSelector;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.handler.MappedInterceptor;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
@@ -121,8 +122,15 @@ public class ModuleRequestMappingHandlerMapping extends RequestMappingHandlerMap
         applicationContext.getBeanNamesForType(Object.class));
   }
 
-  @Override
-  protected void detectMappedInterceptors(List<MappedInterceptor> mappedInterceptors) {
+  /**
+   * Detect beans of type {@link MappedInterceptor} and add them to the list of mapped interceptors.
+   * <p>This is called in addition to any {@link MappedInterceptor}s that may have been provided
+   * via {@link #setInterceptors}, by default adding all beans of type {@link MappedInterceptor}
+   * from the current context and its ancestors. Subclasses can override and refine this policy.
+   *
+   * @param mappedInterceptors an empty list to add {@link MappedInterceptor} instances to
+   */
+  protected void detectMappedInterceptors(List<HandlerInterceptor> mappedInterceptors) {
     final Collection<ApplicationContext> values = BeanFactoryUtils.beansOfTypeIncludingAncestors(
         getApplicationContext(), ApplicationContext.class, true, false).values();
     for (ApplicationContext value : values) {
