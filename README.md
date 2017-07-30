@@ -245,7 +245,7 @@ public class HomeController {
   }
 }
 ```
-则index的正确访问方式是/home/index.json，而返回的"index.html"的路径是/home/index.html
+则index的正确访问方式是/home/index.json，而返回的"index.html"的路径是/home/view/index.html
 ### webmvc的公共ApplicationContext;
 ModularDispatcherServlet会创建一个ApplicationContext用于配置各controller模块需要的公共组件。
 比如可以将公共的视图渲染器或者文件上传的配置写在此公共的ApplicationContext中，使用方式很简单，给ModularDispatcherServlet
