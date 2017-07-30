@@ -47,6 +47,8 @@ public abstract class ModularServletInitializer extends SpringBootServletInitial
         : new ServletRegistrationBean(servlet, urlPattern.value());
     registration.setName("dispatcherServlet");
 
+    registration.setLoadOnStartup(0);
+
     return registration;
   }
 
