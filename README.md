@@ -300,6 +300,23 @@ controller层实现模块化后，springmvc支持的拦截器有两种使用形�
       </mvc:interceptors>
     ```
     
+## spring-boot
+对mvc模块化工程提供了spring-boot的支持，但是未完全实现基于注解的配置，还是需要xml。
+
+使用方式：
+```java
+@ModularApplication
+@ModularDispatcherConfig(webModuleNamePrefix = "cn.yxffcode.test.web")
+@UrlPattern("*.json")
+public class Application extends ModularServletInitializer {
+  public static void main(String[] args) {
+    final ConfigurableApplicationContext ctx = SpringApplication.run(Application.class, args);
+  }
+}
+```
+* @ModularApplication注解类似于@SpringBootApplication注解的功能
+* @ModularDispatcherConfig配置模块化的springmvc工程
+* @UrlPattern指定ModularDispatcherServlet拦截什么样的url，不配置则默认为"/"
 
 ## 模块化工程结构参考
 
