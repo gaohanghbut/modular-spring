@@ -10,6 +10,7 @@ import cn.yxffcode.modularspring.webmvc.request.ModuleRequestMappingHandlerMappi
 import cn.yxffcode.modularspring.webmvc.view.ModuleResourceViewResolver;
 import com.google.common.base.Predicate;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
@@ -48,7 +49,7 @@ public class ModularDispatcherServlet extends DispatcherServlet {
     this.modularLifecycle = modularLifecycle;
 
     //初始化基础组件容器
-    final WebApplicationContext commonApplicationContext = createCommonComponentApplicationContext();
+    final WebApplicationContext commonApplicationContext = createCommonComponentApplicationContext(parent);
 
     final GenericWebApplicationContext wac = new GenericWebApplicationContext(getServletContext());
     if (commonApplicationContext != null) {
@@ -75,7 +76,7 @@ public class ModularDispatcherServlet extends DispatcherServlet {
     }
   }
 
-  private WebApplicationContext createCommonComponentApplicationContext() {
+  private WebApplicationContext createCommonComponentApplicationContext(ApplicationContext parent) {
     final String commonSpringConfig = StringUtils.isBlank(commonApplicationContext)
         ? getServletConfig().getInitParameter(COMMON_COMPONENT_PATH)
         : commonApplicationContext;
@@ -84,6 +85,7 @@ public class ModularDispatcherServlet extends DispatcherServlet {
       final XmlWebApplicationContext ctx = new XmlWebApplicationContext();
       ctx.setServletContext(getServletContext());
       ctx.setConfigLocation(commonSpringConfig);
+      ctx.setParent(parent);
       ctx.refresh();
       commonApplicationContext = ctx;
     }
@@ -91,12 +93,36 @@ public class ModularDispatcherServlet extends DispatcherServlet {
   }
 
   private void registerHandlerMapping(GenericWebApplicationContext wac) {
+    final ApplicationContext parent = wac.getParent();
+    if (parent != null && parent.containsBeanDefinition(HANDLER_MAPPING_BEAN_NAME)) {
+      return;
+    }
+    if (parent != null) {
+      try {
+        parent.getBean(ModuleRequestMappingHandlerMapping.class);
+        return;
+      } catch (BeansException e) {
+        //ignore
+      }
+    }
     final RootBeanDefinition rootBeanDefinition = new RootBeanDefinition();
     rootBeanDefinition.setBeanClass(ModuleRequestMappingHandlerMapping.class);
     wac.registerBeanDefinition(HANDLER_MAPPING_BEAN_NAME, rootBeanDefinition);
   }
 
   private void registerHandlerAdapter(GenericWebApplicationContext wac) {
+    final ApplicationContext parent = wac.getParent();
+    if (parent != null && parent.containsBeanDefinition(HANDLER_ADAPTER_BEAN_NAME)) {
+      return;
+    }
+    if (parent != null) {
+      try {
+        parent.getBean(RequestMappingHandlerAdapter.class);
+        return;
+      } catch (BeansException e) {
+        //ignore
+      }
+    }
     final RootBeanDefinition rootBeanDefinition = new RootBeanDefinition();
     rootBeanDefinition.setBeanClass(RequestMappingHandlerAdapter.class);
     wac.registerBeanDefinition(HANDLER_ADAPTER_BEAN_NAME, rootBeanDefinition);
