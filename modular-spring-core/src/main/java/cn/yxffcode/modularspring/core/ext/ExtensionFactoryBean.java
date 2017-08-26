@@ -31,8 +31,8 @@ public class ExtensionFactoryBean implements FactoryBean<Object> {
         if (target == null) {
           synchronized (this) {
             if (target == null) {
-              //获取真实的扩展表象
-              final ExtensionPointBean extentionPoint = ExtensionHolder.getExtentionPoint(extensionName);
+              //获取真实的扩展点
+              final ExtensionPointBean extentionPoint = ExtensionHolder.getExtensionPoint(extensionName);
               if (extentionPoint == null) {
                 throw new ExtensionLocationException(
                         "没有找到扩展点的实现,请检查是否配置了扩展点的实现.或者检查扩展点的实现模块不应该依赖扩展点所在的模块.扩展点名:" + extensionName);

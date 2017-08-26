@@ -19,7 +19,7 @@ final class ExtensionHolder {
     checkNotNull(extensionPointBean);
     extensionPointBeanMap.put(extensionPointBean.getBeanName(), extensionPointBean);
   }
-  public static ExtensionPointBean getExtentionPoint(String extensionName) {
+  public static ExtensionPointBean getExtensionPoint(String extensionName) {
     return extensionPointBeanMap.get(extensionName);
   }
 }
