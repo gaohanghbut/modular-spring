@@ -21,7 +21,7 @@ public class ExtensionPointBean implements ApplicationContextAware {
   @Override
   public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
     this.applicationContext = applicationContext;
-    ExtensionHolder.registryExtentionPoint(this);
+    ExtensionHolder.registryExtensionPoint(this);
   }
 
   public String getExtensionName() {

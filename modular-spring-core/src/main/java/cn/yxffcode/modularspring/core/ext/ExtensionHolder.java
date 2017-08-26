@@ -1,8 +1,9 @@
 package cn.yxffcode.modularspring.core.ext;
 
-import com.google.common.collect.Maps;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
-import java.util.Map;
+import java.util.Collection;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -13,13 +14,14 @@ final class ExtensionHolder {
   private ExtensionHolder() {
   }
 
-  private static final Map<String, ExtensionPointBean> extensionPointBeanMap = Maps.newHashMap();
+  private static final Multimap<String, ExtensionPointBean> extensionPointBeanMap = HashMultimap.create();
 
-  public static void registryExtentionPoint(ExtensionPointBean extensionPointBean) {
+  public static void registryExtensionPoint(ExtensionPointBean extensionPointBean) {
     checkNotNull(extensionPointBean);
     extensionPointBeanMap.put(extensionPointBean.getBeanName(), extensionPointBean);
   }
-  public static ExtensionPointBean getExtensionPoint(String extensionName) {
+
+  public static Collection<ExtensionPointBean> getExtensionPoint(String extensionName) {
     return extensionPointBeanMap.get(extensionName);
   }
 }

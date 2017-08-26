@@ -1,10 +1,15 @@
 package cn.yxffcode.modularspring.core.ext;
 
+import com.google.common.collect.Lists;
 import com.google.common.reflect.AbstractInvocationHandler;
 import com.google.common.reflect.Reflection;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 用于创建扩展点的代理
@@ -32,12 +37,24 @@ public class ExtensionFactoryBean implements FactoryBean<Object> {
           synchronized (this) {
             if (target == null) {
               //获取真实的扩展点
-              final ExtensionPointBean extentionPoint = ExtensionHolder.getExtensionPoint(extensionName);
-              if (extentionPoint == null) {
+              final Collection<ExtensionPointBean> extensionPoints = ExtensionHolder.getExtensionPoint(extensionName);
+              if (CollectionUtils.isEmpty(extensionPoints)) {
                 throw new ExtensionLocationException(
-                        "没有找到扩展点的实现,请检查是否配置了扩展点的实现.或者检查扩展点的实现模块不应该依赖扩展点所在的模块.扩展点名:" + extensionName);
+                    "没有找到扩展点的实现,请检查是否配置了扩展点的实现.或者检查扩展点的实现模块不应该依赖扩展点所在的模块.扩展点名:" + extensionName);
               }
-              target = extentionPoint.getApplicationContext().getBean(extentionPoint.getBeanName(), extensionInterface);
+              if (extensionPoints.size() == 1) {
+                final ExtensionPointBean extensionPoint = extensionPoints.iterator().next();
+                target = extensionPoint.getApplicationContext().getBean(extensionPoint.getBeanName(), extensionInterface);
+              } else if (ExtensionContainer.class.isAssignableFrom(extensionInterface)) {
+                final List<Object> extensionPointInstances = Lists.newArrayListWithCapacity(extensionPoints.size());
+
+                for (ExtensionPointBean extensionPoint : extensionPoints) {
+                  extensionPointInstances.add(extensionPoint.getApplicationContext().getBean(extensionPoint.getBeanName()));
+                }
+
+
+                target = (ExtensionContainer<Object>) () -> Collections.unmodifiableList(extensionPointInstances);
+              }
             }
           }
         }
