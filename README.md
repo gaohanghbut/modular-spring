@@ -196,7 +196,8 @@ public class PostFactoryBeanModuleLoadListener implements ModuleLoadListener {
 }
 ```
 
-## 扩展点接口
+## 扩展点
+### 扩展接口
 有时候,一个模块中需要使用的接口的实现不由此模块决定,比如数据访问模块需要使用DataSource,而DataSource由集成此模块的系统主模块决定.
 需要通过一种扩展机制,将数据源注入到模块中,在modular-spring中支持扩展点接口,可以将一个接口声明为扩展点,在其它模块中声明接口的实现bean来达到扩展的目的.
 例如声明数据源为扩展点:
@@ -208,6 +209,20 @@ public class PostFactoryBeanModuleLoadListener implements ModuleLoadListener {
   <bean name="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource"/>
   <modular:extension-point extension-name="dataSource" ref="dataSource"/>
 ```
+### 扩展点容器
+有时候，模块中依赖一个接口的多个实现，则可以使用ExtensionContainer，用法与扩展接口类似，只需要将扩展点接口改为ExtensionContainer：
+```xml
+  <modular:extension name="testExtensionContainer" interface="cn.yxffcode.modularspring.core.ext.ExtensionContainer"/>
+```
+其它模块中提供扩展点实例：
+```xml
+  <bean name="ext1" class="java.lang.Object"/>
+  <modular:extension-point extension-name="testExtensionContainer" ref="ext1"/>
+  
+  <bean name="ext2" class="java.lang.Object"/>
+  <modular:extension-point extension-name="testExtensionContainer" ref="ext2"/>
+```
+同一个ExtensionContainer的扩展点实例可以在不同的模块中
 ## webmvc
 ### springmvc对controller的模块化
 在web.xml中配置servlet
