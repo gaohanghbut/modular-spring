@@ -1,9 +1,8 @@
 package cn.yxffcode.modularspring.core.ext;
 
-import cn.yxffcode.modularspring.core.ServiceBean;
-import com.google.common.base.Strings;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.RuntimeBeanNameReference;
+import org.springframework.beans.factory.config.BeanDefinitionHolder;
+import org.springframework.beans.factory.parsing.BeanComponentDefinition;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -26,6 +25,7 @@ public class ExtensionBeanDefinitionParser implements BeanDefinitionParser {
     } catch (ClassNotFoundException e) {
       parserContext.getReaderContext().fatal("找不到类" + interfaceName, e);
     }
+    parserContext.registerBeanComponent(new BeanComponentDefinition(new BeanDefinitionHolder(bean, extensionName)));
     return null;
   }
 }

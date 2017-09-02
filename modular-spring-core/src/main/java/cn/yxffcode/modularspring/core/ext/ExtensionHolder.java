@@ -18,7 +18,7 @@ final class ExtensionHolder {
 
   public static void registryExtensionPoint(ExtensionPointBean extensionPointBean) {
     checkNotNull(extensionPointBean);
-    extensionPointBeanMap.put(extensionPointBean.getBeanName(), extensionPointBean);
+    extensionPointBeanMap.put(extensionPointBean.getExtensionName(), extensionPointBean);
   }
 
   public static Collection<ExtensionPointBean> getExtensionPoint(String extensionName) {
