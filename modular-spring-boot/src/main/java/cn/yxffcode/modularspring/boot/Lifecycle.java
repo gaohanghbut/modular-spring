@@ -3,6 +3,8 @@ package cn.yxffcode.modularspring.boot;
 import cn.yxffcode.modularspring.boot.listener.ModuleLoadListener;
 import cn.yxffcode.modularspring.core.context.ModuleApplicationContext;
 import com.google.common.base.Throwables;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -14,6 +16,8 @@ import java.util.Map;
  * @author gaohang on 6/24/17.
  */
 public class Lifecycle {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(Lifecycle.class);
 
   private Map<ModuleConfig, ModuleApplicationContext> applicationContexts = Collections.emptyMap();
 
@@ -42,7 +46,11 @@ public class Lifecycle {
   public void destroy() {
     for (ApplicationContext applicationContext : applicationContexts.values()) {
       if (applicationContext instanceof ConfigurableApplicationContext) {
-        ((ConfigurableApplicationContext) applicationContext).close();
+        try {
+          ((ConfigurableApplicationContext) applicationContext).close();
+        } catch (Exception e) {
+          LOGGER.error("close ApplicationContext failed", e);
+        }
       }
     }
   }
