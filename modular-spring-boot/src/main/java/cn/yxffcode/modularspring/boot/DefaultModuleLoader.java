@@ -53,7 +53,7 @@ public class DefaultModuleLoader implements ModuleLoader {
     //refresh
     for (ModuleConfig moduleConfig : topological) {
       final ModuleApplicationContext applicationContext = applicationContexts.get(moduleConfig);
-      if (applicationContext instanceof ConfigurableApplicationContext) {
+      if (applicationContext != null) {
         attachModulePath(moduleConfigs, moduleConfig);
         final Stopwatch stopwatch = Stopwatch.createStarted();
         invokeBeforeRefresh(moduleConfig, applicationContext);
