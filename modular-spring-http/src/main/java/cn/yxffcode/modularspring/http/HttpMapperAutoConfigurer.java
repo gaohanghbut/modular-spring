@@ -19,12 +19,13 @@ public class HttpMapperAutoConfigurer implements BeanDefinitionRegistryPostProce
   private ResponseHandler defaultResponseHandler;
   private String[] basePackages;
   private Class<? extends Annotation> annotation;
+  private boolean createModularService;
 
   @Override
   public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
 
     final HttpMapperScanner scanner = new HttpMapperScanner(registry, httpClientFactory,
-        commonRequestPostProcessors, defaultResponseHandler, annotation);
+        commonRequestPostProcessors, defaultResponseHandler, annotation, createModularService);
     scanner.registerFilters();
     scanner.doScan(basePackages);
     scanner.getConfiguration();
@@ -72,5 +73,13 @@ public class HttpMapperAutoConfigurer implements BeanDefinitionRegistryPostProce
 
   public void setAnnotation(Class<? extends Annotation> annotation) {
     this.annotation = annotation;
+  }
+
+  public boolean isCreateModularService() {
+    return createModularService;
+  }
+
+  public void setCreateModularService(boolean createModularService) {
+    this.createModularService = createModularService;
   }
 }

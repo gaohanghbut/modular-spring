@@ -9,21 +9,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>modular-spring-http</artifactId>
+  <artifactId>modular-spring-mybatis</artifactId>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpasyncclient</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.alibaba</groupId>
-      <artifactId>fastjson</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>cn.yxffcode</groupId>
-      <artifactId>modular-spring-core</artifactId>
-    </dependency>
-  </dependencies>
 
 </project>

@@ -15,6 +15,7 @@
     <module>modular-spring-springboot</module>
     <module>modular-spring-tx</module>
     <module>modular-spring-http</module>
+    <module>modular-spring-mybatis</module>
   </modules>
 
   <properties>

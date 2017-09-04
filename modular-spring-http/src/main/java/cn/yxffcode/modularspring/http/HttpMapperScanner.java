@@ -1,12 +1,16 @@
 package cn.yxffcode.modularspring.http;
 
+import cn.yxffcode.modularspring.core.config.ModularBeanUtils;
 import cn.yxffcode.modularspring.http.cfg.Configuration;
 import cn.yxffcode.modularspring.http.http.HttpClientFactory;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.BeanNameGenerator;
+import org.springframework.beans.factory.support.DefaultBeanNameGenerator;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
+import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
@@ -27,17 +31,23 @@ public class HttpMapperScanner extends ClassPathBeanDefinitionScanner {
   private final List<RequestPostProcessor> requestPostProcessors;
   private final ResponseHandler defaultResponseHandler;
   private Configuration configuration;
+  private final boolean createModularService;
+
+  private final BeanNameGenerator beanNameGenerator = new DefaultBeanNameGenerator();
+
 
   public HttpMapperScanner(BeanDefinitionRegistry registry,
                            HttpClientFactory httpClientFactory,
                            List<RequestPostProcessor> requestPostProcessors,
                            ResponseHandler defaultResponseHandler,
-                           Class<? extends Annotation> annotation) {
+                           Class<? extends Annotation> annotation,
+                           boolean createModularService) {
     super(registry, false);
     this.httpClientFactory = httpClientFactory;
     this.requestPostProcessors = requestPostProcessors;
     this.defaultResponseHandler = defaultResponseHandler;
     this.annotationClass = annotation;
+    this.createModularService = createModularService;
   }
 
   public void setAnnotationClass(Class<? extends Annotation> annotationClass) {
@@ -78,6 +88,15 @@ public class HttpMapperScanner extends ClassPathBeanDefinitionScanner {
       logger.warn("No Http mapper was found in '" + Arrays.toString(basePackages) + "' package. Please check your configuration.");
     } else {
       processBeanDefinitions(beanDefinitions);
+      //registry modular services
+      if (createModularService) {
+        for (BeanDefinitionHolder holder : beanDefinitions) {
+          final RootBeanDefinition serviceBean = ModularBeanUtils.buildServiceBean(holder.getBeanName(),
+              holder.getBeanDefinition().getBeanClassName(), null);
+          getRegistry().registerBeanDefinition(
+              beanNameGenerator.generateBeanName(serviceBean, getRegistry()), serviceBean);
+        }
+      }
     }
 
     return beanDefinitions;
