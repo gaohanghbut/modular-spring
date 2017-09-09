@@ -1,5 +1,13 @@
 # modular-spring
-Spring框架是一把灵活锋利的瑞士军刀，这里通过扩展Spring，实现工程的模块化。
+Spring框架是一把灵活锋利的瑞士军刀，这里通过扩展Spring，实现工程的模块化，modular-spring的功能如下：
+
+* modular-spring-core：提供模块化的基础功能，比如模块化的ApplicationContext，模块的扩展接口，服务的发布与引用，服务的自动打桩等
+* modular-spring-boot：提供模块化工程的加载功能
+* modular-spring-webmvc：modular-spring对springmvc的支持
+* modular-spring-springboot：在springboot中使用modular-spring
+* modular-spring-tx：对spring的事务管理器的扩展，支持一个事务管理器同时管理多个数据源
+* modular-spring-http：通过类似于mybatis的注解和映射接口的方式提供http服务的集成api并实现了按模块加载和发布模块间的服务
+
 
 ## 模块化
 面向对象中的封装是指利用抽象数据类型将数据和基于数据的操作封装在一起，
