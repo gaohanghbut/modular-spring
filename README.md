@@ -528,6 +528,8 @@ public interface TestServiceFacade {
         <value>cn.yxffcode.xxx</value>
       </array>
     </property>
+    <!--是否创建modular-spring的模块服务，默认不创建-->
+    <property name="createModularService" value="true"/>
     <property name="annotation" value="org.springframework.stereotype.Component"/>
   </bean>
 ```
@@ -542,6 +544,7 @@ public interface TestServiceFacade {
     <property name="annotation" value="org.springframework.stereotype.Component"/>
 
     <!--以下是可选-->
+    <property name="createModularService" value="true"/>
     <property name="commonRequestPostProcessors">
       <list>
         <ref bean="keepHeaderPostProcessor"/>
