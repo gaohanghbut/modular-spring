@@ -368,7 +368,20 @@ public class Application extends ModularServletInitializer {
 
   <tx:annotation-driven transaction-manager="transactionManager"/>
 ```
-
+## mybatis
+使用如下配置，可自动为mybatis映射接口创建模块间的服务绑定，spring与mybatis集成的其它配置不变，只需要将MapperScannerConfigurer修改为ModularSpringMapperScannerConfigurer
+```xml
+  <bean class="cn.yxffcode.modularspring.mybatis.ModularSpringMapperScannerConfigurer">
+    <property name="createModularService" value="true"/>
+    <property name="basePackage" value="cn.yxffcode.modularspring.mybatis"/>
+    <property name="annotationClass" value="org.springframework.stereotype.Repository"/>
+  </bean>
+```
+其它模块可通过服务引用的方式使用DAO模块中的映射接口
+```xml
+  <modular:reference name="testMapperRef" interface="cn.yxffcode.modularspring.mybatis.TestMapper"/>
+```
+也可以使用@ModularReference注解.
 ## http服务集成
 modular-spring-http是对httpasyncclient的简单封装，用于发送http请求并将返回数据转换成对象，以mapper接口的方式使用http-client，应用代码只需要写个interface的声明即可
 
