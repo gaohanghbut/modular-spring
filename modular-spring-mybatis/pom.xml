@@ -20,5 +20,9 @@
       <groupId>org.mybatis</groupId>
       <artifactId>mybatis-spring</artifactId>
     </dependency>
+    <dependency>
+      <groupId>cn.yxffcode</groupId>
+      <artifactId>modular-spring-core</artifactId>
+    </dependency>
   </dependencies>
 </project>
