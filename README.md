@@ -333,6 +333,34 @@ public class Application extends ModularServletInitializer {
 * @ModularDispatcherConfig配置模块化的springmvc工程
 * @UrlPattern指定ModularDispatcherServlet拦截什么样的url，不配置则默认为"/"
 
+## 事务管理器对多数据源的支持
+当不同的模块需要使用不同的数据源时，可使用MultiDataSourcesTransactionManager作为事务管理器
+```xml
+  <bean name="dataSource1"
+        class="org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy">
+    <constructor-arg>
+      <bean class="org.springframework.jdbc.datasource.DriverManagerDataSource"></bean>
+    </constructor-arg>
+  </bean>
+  <bean name="dataSource2"
+        class="org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy">
+    <constructor-arg>
+        <bean class="org.springframework.jdbc.datasource.DriverManagerDataSource"></bean>
+    </constructor-arg>
+  </bean>
+  <bean name="transactionManager"
+        class="cn.yxffcode.modularspring.tx.MultiDataSourcesTransactionManager">
+    <property name="dataSources">
+      <map>
+        <entry key="dataSource1" value-ref="dataSource1"/>
+        <entry key="dataSource2" value-ref="dataSource2"/>
+      </map>
+    </property>
+  </bean>
+
+  <tx:annotation-driven transaction-manager="transactionManager"/>
+```
+
 ## http服务集成
 modular-spring-http是对httpasyncclient的简单封装，用于发送http请求并将返回数据转换成对象，以mapper接口的方式使用http-client，应用代码只需要写个interface的声明即可
 
