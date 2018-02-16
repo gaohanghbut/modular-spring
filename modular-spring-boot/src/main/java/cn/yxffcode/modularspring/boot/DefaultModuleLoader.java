@@ -7,6 +7,7 @@ import cn.yxffcode.modularspring.core.context.DefaultModuleApplicationContext;
 import cn.yxffcode.modularspring.core.context.ModuleApplicationContext;
 import cn.yxffcode.modularspring.core.io.ClasspathScanner;
 import cn.yxffcode.modularspring.core.io.JarEntryReader;
+import cn.yxffcode.modularspring.core.plugin.PluginLoader;
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;

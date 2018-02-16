@@ -36,7 +36,7 @@ public class DefaultModuleApplicationContext extends AbstractXmlApplicationConte
     beanDefinitionReader.setEnvironment(this.getEnvironment());
     beanDefinitionReader.setResourceLoader(this);
     beanDefinitionReader.setEntityResolver(new ResourceEntityResolver(this));
-
+    beanDefinitionReader.setValidating(false);
     initBeanDefinitionReader(beanDefinitionReader);
     loadBeanDefinitions(beanDefinitionReader);
   }

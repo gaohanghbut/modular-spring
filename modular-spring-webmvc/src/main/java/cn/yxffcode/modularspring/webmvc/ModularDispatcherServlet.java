@@ -1,11 +1,12 @@
 package cn.yxffcode.modularspring.webmvc;
 
-import cn.yxffcode.modularspring.boot.Lifecycle;
+import cn.yxffcode.modularspring.boot.ApplicationManager;
 import cn.yxffcode.modularspring.boot.ModuleConfig;
 import cn.yxffcode.modularspring.boot.listener.ModuleLoadListener;
 import cn.yxffcode.modularspring.boot.utils.ModuleUtils;
+import cn.yxffcode.modularspring.core.ModularSpringConfiguration;
 import cn.yxffcode.modularspring.core.context.ModuleApplicationContext;
-import cn.yxffcode.modularspring.webmvc.boot.WebappModuleLoader;
+import cn.yxffcode.modularspring.webmvc.boot.WebappModuleLoaderFactory;
 import cn.yxffcode.modularspring.webmvc.request.ModuleRequestMappingHandlerMapping;
 import cn.yxffcode.modularspring.webmvc.view.ModuleResourceViewResolver;
 import com.google.common.base.Predicate;
@@ -31,7 +32,9 @@ public class ModularDispatcherServlet extends DispatcherServlet {
    */
   private static final String COMMON_COMPONENT_PATH = "commonApplicationContext";
 
-  private Lifecycle modularLifecycle;
+  private static final String MODULAR_SPRING_CONFIG_PATH = "modularSpringConfig";
+
+  private ApplicationManager modularApplicationManager;
 
   private String webModuleNamePrefix;
   private String commonApplicationContext;
@@ -44,9 +47,15 @@ public class ModularDispatcherServlet extends DispatcherServlet {
             ? getServletConfig().getInitParameter(WEB_APP_MODULE_PATTERN)
             : webModuleNamePrefix
     );
-    final Lifecycle modularLifecycle = new Lifecycle(new WebappModuleLoader(getServletContext(), getServletConfig(), webModulePredicate));
 
-    this.modularLifecycle = modularLifecycle;
+    final ModularSpringConfiguration modularSpringConfiguration = new ModularSpringConfiguration();
+
+    //todo:临时代码
+    modularSpringConfiguration.setPluginPath("/tmp/modularspring/plugins");
+
+    final ApplicationManager modularApplicationManager = new ApplicationManager(modularSpringConfiguration, new WebappModuleLoaderFactory(getServletContext(), getServletConfig(), webModulePredicate));
+
+    this.modularApplicationManager = modularApplicationManager;
 
     //初始化基础组件容器
     final WebApplicationContext commonApplicationContext = createCommonComponentApplicationContext(parent);
@@ -55,8 +64,8 @@ public class ModularDispatcherServlet extends DispatcherServlet {
     if (commonApplicationContext != null) {
       wac.setParent(commonApplicationContext);
     }
-    modularLifecycle.addModuleLoadListener(new WebModuleRegistryListener(webModulePredicate, wac, commonApplicationContext));
-    modularLifecycle.boot();
+    modularApplicationManager.addModuleLoadListener(new WebModuleRegistryListener(webModulePredicate, wac, commonApplicationContext));
+    modularApplicationManager.boot();
 
     registerHandlerMapping(wac);
 
@@ -131,8 +140,8 @@ public class ModularDispatcherServlet extends DispatcherServlet {
   @Override
   public void destroy() {
     super.destroy();
-    if (modularLifecycle != null) {
-      modularLifecycle.destroy();
+    if (modularApplicationManager != null) {
+      modularApplicationManager.destroy();
     }
   }
 

@@ -1,13 +1,16 @@
 package cn.yxffcode.modularspring.core.context;
 
-import cn.yxffcode.modularspring.core.config.ModularBeanUtils;
 import cn.yxffcode.modularspring.core.ServiceDeclarationException;
 import cn.yxffcode.modularspring.core.annotation.ModularReference;
 import cn.yxffcode.modularspring.core.annotation.ModularService;
+import cn.yxffcode.modularspring.core.config.ModularBeanUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanNameGenerator;
 import org.springframework.beans.factory.support.DefaultBeanNameGenerator;
@@ -21,6 +24,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author gaohang on 7/8/17.
  */
 public class ModularBeanDefinitionRegistry implements BeanDefinitionRegistry {
+  private static final Logger LOGGER = LoggerFactory.getLogger(ModularBeanDefinitionRegistry.class);
+
   private final BeanNameGenerator beanNameGenerator = new DefaultBeanNameGenerator();
 
   private final BeanDefinitionRegistry delegate;
@@ -35,10 +40,18 @@ public class ModularBeanDefinitionRegistry implements BeanDefinitionRegistry {
   public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition) throws BeanDefinitionStoreException {
     delegate.registerBeanDefinition(beanName, beanDefinition);
     //check if this bean is a modular service
-    final String beanClassName = beanDefinition.getBeanClassName();
-    final Class<?> beanClass = getServiceBeanClass(beanClassName);
-    registerServiceBeanIfNeed(beanName, beanClass);
+    Class<?> beanClass = null;
+    try {
+      beanClass = getServiceBeanClass(beanDefinition);
+    } catch (Exception ignore) {
+      LOGGER.warn("ignore error when register service bean by annotation:{}", ignore.getMessage());
+    }
 
+    if (beanClass == null) {
+      return;
+    }
+
+    registerServiceBeanIfNeed(beanName, beanClass);
     //reference
     registerServiceReferenceIfNeed(beanClass);
   }
@@ -51,7 +64,7 @@ public class ModularBeanDefinitionRegistry implements BeanDefinitionRegistry {
         final Class<?>[] interfaces = beanClass.getInterfaces();
         if (ArrayUtils.isEmpty(interfaces)) {
           throw new BeanDefinitionStoreException("服务定义出错",
-                  new ServiceDeclarationException("modular service定义异常,bean 没有实现接口,bean的类型:" + serviceInterface.getName()));
+              new ServiceDeclarationException("modular service定义异常,bean 没有实现接口,bean的类型:" + serviceInterface.getName()));
         }
         serviceInterface = interfaces[0];
       }
@@ -86,10 +99,14 @@ public class ModularBeanDefinitionRegistry implements BeanDefinitionRegistry {
     return type.getSimpleName() + "ModularReference#";
   }
 
-  private Class<?> getServiceBeanClass(String beanClassName) {
+  private Class<?> getServiceBeanClass(BeanDefinition beanDefinition) {
+    final String beanClassName = beanDefinition.getBeanClassName();
     try {
       return Class.forName(beanClassName);
     } catch (ClassNotFoundException e) {
+      if (beanDefinition instanceof AbstractBeanDefinition) {
+        return ((AbstractBeanDefinition) beanDefinition).getBeanClass();
+      }
       throw new BeanDefinitionStoreException("类不存在:" + beanClassName);
     }
   }

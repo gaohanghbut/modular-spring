@@ -32,6 +32,10 @@ Spring框架是一把灵活锋利的瑞士军刀，这里通过扩展Spring，�
 没有类之间的隔离,模块间的调用开销小,但无法解决模块间依赖不兼容的问题
 (模块1与模块2依赖了某个jar的不同版本).这里选择使用Spring做模块隔离.
 
+## modular-spring
+
+![modular-spring-arch](docs/img/modular-spring-arch.png)
+
 ## modular-spring的模块的约定
 包含如下两类文件的jar或者子工程被认为是一个模块
 * META-INF/module.json(一个模块只能有一个)
