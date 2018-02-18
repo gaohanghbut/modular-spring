@@ -7,7 +7,6 @@ import cn.yxffcode.modularspring.core.context.DefaultModuleApplicationContext;
 import cn.yxffcode.modularspring.core.context.ModuleApplicationContext;
 import cn.yxffcode.modularspring.core.io.ClasspathScanner;
 import cn.yxffcode.modularspring.core.io.JarEntryReader;
-import cn.yxffcode.modularspring.core.plugin.PluginLoader;
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
@@ -19,7 +18,6 @@ import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.CollectionUtils;
 
 import java.io.File;

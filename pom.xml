@@ -17,7 +17,6 @@
     <module>modular-spring-http</module>
     <module>modular-spring-mybatis</module>
     <module>modular-spring-test</module>
-    <module>modular-spring-plugin</module>
     <module>modular-spring-plugin-api</module>
   </modules>
 

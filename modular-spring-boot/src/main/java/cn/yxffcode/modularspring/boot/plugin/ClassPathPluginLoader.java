@@ -1,6 +1,7 @@
-package cn.yxffcode.modularspring.core.plugin;
+package cn.yxffcode.modularspring.boot.plugin;
 
 import cn.yxffcode.modularspring.core.ModularSpringConfiguration;
+import cn.yxffcode.modularspring.core.plugin.Plugin;
 import cn.yxffcode.modularspring.core.plugin.classloader.PluginClassLoader;
 import cn.yxffcode.modularspring.core.io.ClasspathScanner;
 import cn.yxffcode.modularspring.core.io.ZipUtils;

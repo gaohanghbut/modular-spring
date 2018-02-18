@@ -1,4 +1,6 @@
-package cn.yxffcode.modularspring.core.plugin;
+package cn.yxffcode.modularspring.boot.plugin;
+
+import cn.yxffcode.modularspring.core.plugin.Plugin;
 
 import java.net.URLClassLoader;
 import java.util.List;

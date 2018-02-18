@@ -1,4 +1,4 @@
-package cn.yxffcode.modularspring.core.plugin;
+package cn.yxffcode.modularspring.boot.plugin;
 
 /**
  * @author gaohang on 2/15/18.

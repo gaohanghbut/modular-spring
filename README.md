@@ -7,6 +7,8 @@ Spring框架是一把灵活锋利的瑞士军刀，这里通过扩展Spring，�
 * modular-spring-springboot：在springboot中使用modular-spring
 * modular-spring-tx：对spring的事务管理器的扩展，支持一个事务管理器同时管理多个数据源
 * modular-spring-http：通过类似于mybatis的注解和映射接口的方式提供http服务的集成api并实现了按模块加载和发布模块间的服务
+* modular-spring-plugin-api：开发插件的api包
+* modular-spring-mybatis：模块化后，对mybatis映射接口的支持
 
 
 ## 模块化
@@ -35,6 +37,19 @@ Spring框架是一把灵活锋利的瑞士军刀，这里通过扩展Spring，�
 ## modular-spring
 
 ![modular-spring-arch](docs/img/modular-spring-arch.png)
+
+* core：modular-spring提供的核心服务
+    * 提供Spring架构的扩展，支持单个模块的应用上下文加载能力
+    * 模块化扩展点的支持，支持不同的模块之间的依赖倒置能力
+    * ClassLoader的扩展，支持插件的classloader隔离
+    * 插件api，用于实现插件开发的简单接口
+* boot：提供模块化装载与插件装载能力，主要由三个组件组成
+    * ModuleLoader：用于装载系统的各个模块，创建各模块的应用上下文
+    * PluginLoader：用于装载插件
+    * ApplicationManager：用于管理应用的生命周期
+* extension：框架的扩展功能
+* app：应用层，由各种不同的插件和模块化的应用组成
+    
 
 ## modular-spring的模块的约定
 包含如下两类文件的jar或者子工程被认为是一个模块
