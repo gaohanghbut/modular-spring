@@ -20,26 +20,40 @@ public class PluginClassLoader extends URLClassLoader {
   protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
     //这里与双亲委派不同的是，先自己加载，加载不到再使用parent加载
 
-    if (name.startsWith("java.") || name.startsWith("javax.") || name.startsWith("com.sun.misc.")) {
+    if (name.startsWith("java.") || name.startsWith("javax.")
+        || name.startsWith("com.sun.misc.") || name.startsWith("org.springframework.")
+        || name.startsWith("cn.yxffcode.modularspring.")) {
       return parent.loadClass(name);
     }
-    //先自己加载
-    Class<?> clazz = null;
-    try {
-      clazz = super.loadClass(name, resolve);
-    } catch (ClassNotFoundException e) {
-      //ignore
-    }
 
-    if (clazz == null) {
-      //代理给parent
-      clazz = parent.loadClass(name);
-    }
+    synchronized (getClassLoadingLock(name)) {
+      // First, check if the class has already been loaded
+      Class<?> c = findLoadedClass(name);
+      if (c == null) {
+        long t0 = System.nanoTime();
+        try {
+          c = findClass(name);
+        } catch (ClassNotFoundException e) {
+          // ClassNotFoundException thrown if class not found
+          // from the non-null parent class loader
+        }
 
-    if (resolve) {
-      resolveClass(clazz);
-    }
+        if (c == null) {
+          // If still not found, then invoke findClass in order
+          // to find the class.
+          long t1 = System.nanoTime();
 
-    return clazz;
+          c = parent.loadClass(name);
+          // this is the defining class loader; record the stats
+          sun.misc.PerfCounter.getParentDelegationTime().addTime(t1 - t0);
+          sun.misc.PerfCounter.getFindClassTime().addElapsedTimeFrom(t1);
+          sun.misc.PerfCounter.getFindClasses().increment();
+        }
+      }
+      if (resolve) {
+        resolveClass(c);
+      }
+      return c;
+    }
   }
 }
