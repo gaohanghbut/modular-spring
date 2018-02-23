@@ -133,6 +133,9 @@ public class ClassPathPluginLoader implements PluginLoader {
 
   private Map<String, Object> getPluginConfig(final ClassLoader classLoader) throws IOException {
     try (InputStream in = classLoader.getResourceAsStream(PluginConfigConstants.PLUGIN_CONFIG_PATH)) {
+      if (in == null) {
+        throw new PluginLoadException("找不到" + PluginConfigConstants.PLUGIN_CONFIG_PATH);
+      }
       return JSON.parseObject(in, Map.class);
     }
   }

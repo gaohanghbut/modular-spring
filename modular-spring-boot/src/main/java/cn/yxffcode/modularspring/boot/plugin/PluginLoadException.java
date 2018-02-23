@@ -9,4 +9,7 @@ public class PluginLoadException extends RuntimeException {
     super(cause);
   }
 
+  public PluginLoadException(String message) {
+    super(message);
+  }
 }
