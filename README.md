@@ -250,6 +250,170 @@ public class PostFactoryBeanModuleLoadListener implements ModuleLoadListener {
   <modular:extension-point extension-name="testExtensionContainer" ref="ext2"/>
 ```
 同一个ExtensionContainer的扩展点实例可以在不同的模块中
+## 插件
+对于通过类加载器做隔离的场景，可能过插件来实现，比如：
+* 复杂的库的接入，这种情况比较多，例如接入不同的中间件，每个中间件的依赖比较多，需要花大量精力处理包冲突等依赖问题，中间件升级困难
+* 依赖的不同库的包冲突，例如不同中间件依赖了同一个兼容性差的库的不同版本
+### 插件开发
+* 工程结构：工程结构与普通的maven工程无异，建议最少分为以下两个子工程
+    * api:应用中使用的插件提供的服务接口
+    * core:插件的服务接口实现
+    例如：
+    ![modular-spring-plugin-project](docs/img/modular-spring-plugin-project.png)
+* 插件打包：插件使用zip包的方式，需要将工程中的jar及其依赖的jar打到zip包中，zip包中包含一个名为${pluginName}的目录，打包可参考如下配置：
+    * pom文件中的maven插件配置，各插件的作用这里不做细说
+        ```xml
+        <build>
+            <plugins>
+              <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.5.1</version>
+                <configuration>
+                  <compilerArgs>
+                    <arg>-verbose</arg>
+                    <arg>-Xlint:all,-options,-path</arg>
+                  </compilerArgs>
+                  <source>1.8</source>
+                  <target>1.8</target>
+                  <generatedSourcesDirectory>${project.build.directory}</generatedSourcesDirectory>
+                </configuration>
+              </plugin>
+              <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                  <execution>
+                    <id>copy-dependencies</id>
+                    <phase>compile</phase>
+                    <goals>
+                      <goal>copy-dependencies</goal>
+                    </goals>
+                    <configuration>
+                      <!-- ${project.build.directory}为Maven内置变量，缺省为target -->
+                      <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                      <!-- 表示是否不包含间接依赖的包 -->
+                      <excludeTransitive>false</excludeTransitive>
+                      <!-- 表示复制的jar文件去掉版本信息 -->
+                      <stripVersion>false</stripVersion>
+                    </configuration>
+                  </execution>
+                  <execution>
+                    <id>copy</id>
+                    <phase>package</phase>
+                    <goals>
+                      <goal>copy</goal>
+                    </goals>
+                    <configuration>
+                      <!-- ${project.build.directory}为Maven内置变量，缺省为target -->
+                      <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                      <artifactItems>
+                        <artifactItem>
+                          <groupId>cn.yxffcode</groupId>
+                          <artifactId>modular-spring-plugin-test-core</artifactId>
+                        </artifactItem>
+                      </artifactItems>
+                    </configuration>
+                  </execution>
+                </executions>
+              </plugin>
+              <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                  <execution>
+                    <id>make-assembly</id>
+                    <phase>package</phase>
+                    <goals>
+                      <goal>single</goal>
+                    </goals>
+                    <configuration>
+                      <finalName>testplugin</finalName>
+                      <descriptor>assembly/assembly.xml</descriptor><!--配置描述文件路径-->
+                    </configuration>
+                  </execution>
+                </executions>
+              </plugin>
+            </plugins>
+          </build>
+        ```
+    * assembly/assembly.xml文件:
+        ```xml
+        <assembly>
+          <id></id>
+          <formats>
+            <format>zip</format>
+          </formats>
+          <includeBaseDirectory>true</includeBaseDirectory>
+          <dependencySets>
+            <dependencySet>
+              <useProjectArtifact>true</useProjectArtifact>
+              <outputDirectory>/</outputDirectory>
+              <scope>runtime</scope>
+            </dependencySet>
+          </dependencySets>
+          <fileSets>
+            <fileSet>
+              <directory>${project.build.directory}/lib</directory>
+              <outputDirectory>/</outputDirectory>
+            </fileSet>
+          </fileSets>
+        </assembly>
+        ```
+    * 插件配置META-INF/plugin.json文件:此文件可放在插件的core工程的resources目录下，其中的内容如下：
+        ```json
+        {
+          "pluginName": "testplugin",
+          "activator": "plugintest.impl.TestPluginActivator",
+          "exportPackages": ["plugintest.api"]
+        }
+        ```
+        * pluginName表示插件名
+        * activator表示插件初始化入口，后面详细介绍
+        * exportPackages表示导出的类的包，一般为api包及其依赖的包，这里有如下两种处理方式
+            * 应用打包的时候，不将插件的api包打进去，应用可通过exportPackages使用插件中的服务
+            * 应用打包时，将插件的api包打进去，插件打包时，不将自己的api包打进去，上面的例子使用的这种方式（maven-dependency-plugin插件没有复杂api工程打出来的jar）
+* 应用中依赖插件，两种方式：
+    * 在META-INF/plugin/${pluginName}.zip
+    * classpath下的.msp文件（实际上是zip格式），可以打包成zip后，将zip部署到maven仓库并命名为${pluginName}.msp，应用中通过maven引用插件即可
+* 插件初始化入口示例：
+    * Activator的实现：
+        ```java
+        public class TestPluginActivator implements PluginActivator {
+          public void onLoad() {
+            PluginTools.registryBeanDefinitionParser(new TestBeanDefinitionParser());
+          }
+        
+          public void onDestroy() {
+          }
+        }
+
+        ```
+    * spring的xml标签解析
+        TestPluginActivator注册了一个TestBeanDefinitionParser，代码如下：
+        ```java
+        public class TestBeanDefinitionParser extends PluginDefBeanDefinitionParser {
+          public String getTagName() {
+            return "test";
+          }
+        
+          public BeanDefinition parse(Element element, ParserContext parserContext) {
+            final RootBeanDefinition rootBeanDefinition = new RootBeanDefinition();
+            rootBeanDefinition.setBeanClass(TestServiceImpl.class);
+            final String name = element.getAttribute("name");
+            parserContext.registerBeanComponent(new BeanComponentDefinition(new BeanDefinitionHolder(rootBeanDefinition, name)));
+            return null;
+          }
+        }
+        ```
+        PluginDefBeanDefinitionParser是一个抽象类，其getTagName方法返回xml标签名，这里是test，表示应用的spring中需要通过如下xml引用插件服务
+        ```xml
+        <modular:plugin>
+            <test name="testPluginService"/>
+        </modular:plugin>
+        ```
+        testPluginService是一个普通的spring-bean，可正常注入到其它bean中
 ## webmvc
 ### springmvc对controller的模块化
 在web.xml中配置servlet
