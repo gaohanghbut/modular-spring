@@ -2,6 +2,7 @@ package cn.yxffcode.modularspring.boot.plugin;
 
 import cn.yxffcode.modularspring.core.ModularSpringConfiguration;
 import cn.yxffcode.modularspring.core.io.ClasspathScanner;
+import cn.yxffcode.modularspring.core.io.DirectoryWrapper;
 import cn.yxffcode.modularspring.core.io.ZipUtils;
 import cn.yxffcode.modularspring.core.plugin.Plugin;
 import cn.yxffcode.modularspring.core.plugin.classloader.PluginClassLoader;
@@ -104,7 +105,7 @@ public class ClassPathPluginLoader implements PluginLoader {
   private void unzipPlugin(String pluginFile, String pluginDir) {
     final File dir = new File(pluginDir);
     if (dir.exists()) {
-      dir.delete();
+      DirectoryWrapper.wrap(dir).delete();
     }
     try {
       ZipUtils.decompressZip(pluginFile, pluginDir);
