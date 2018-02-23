@@ -1,10 +1,10 @@
 package cn.yxffcode.modularspring.boot.plugin;
 
 import cn.yxffcode.modularspring.core.ModularSpringConfiguration;
-import cn.yxffcode.modularspring.core.plugin.Plugin;
-import cn.yxffcode.modularspring.core.plugin.classloader.PluginClassLoader;
 import cn.yxffcode.modularspring.core.io.ClasspathScanner;
 import cn.yxffcode.modularspring.core.io.ZipUtils;
+import cn.yxffcode.modularspring.core.plugin.Plugin;
+import cn.yxffcode.modularspring.core.plugin.classloader.PluginClassLoader;
 import cn.yxffcode.modularspring.plugin.api.PluginActivator;
 import cn.yxffcode.modularspring.plugin.api.PluginConfigConstants;
 import com.alibaba.fastjson.JSON;
@@ -41,12 +41,13 @@ public class ClassPathPluginLoader implements PluginLoader {
       classpathScanner.scan(classpathClassLoader, new Predicate<String>() {
         @Override
         public boolean apply(String input) {
-          return input.endsWith(PluginConfigConstants.PLUGIN_PKG_SUFFIX);
+          return input.endsWith(PluginConfigConstants.PLUGIN_PKG_SUFFIX) && input.startsWith(PluginConfigConstants.PLUGIN_PKG_PREFIX);
         }
       });
     } catch (IOException e) {
       throw new PluginLoadException(e);
     }
+
     final ImmutableSortedSet<ClasspathScanner.ResourceInfo> resources = classpathScanner.getResources();
     return copyPlugins(classpathClassLoader, resources);
   }
@@ -101,6 +102,10 @@ public class ClassPathPluginLoader implements PluginLoader {
   }
 
   private void unzipPlugin(String pluginFile, String pluginDir) {
+    final File dir = new File(pluginDir);
+    if (dir.exists()) {
+      dir.delete();
+    }
     try {
       ZipUtils.decompressZip(pluginFile, pluginDir);
     } catch (IOException e) {

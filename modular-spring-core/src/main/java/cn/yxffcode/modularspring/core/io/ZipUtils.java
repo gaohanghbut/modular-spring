@@ -43,6 +43,8 @@ public abstract class ZipUtils {
       //然后把文件写到指定的文件夹
       while ((archiveEntry = zais.getNextEntry()) != null) {
         if (archiveEntry.isDirectory()) {
+          final File dir = new File(saveFileDir, archiveEntry.getName());
+          dir.mkdirs();
           continue;
         }
         //获取文件名
