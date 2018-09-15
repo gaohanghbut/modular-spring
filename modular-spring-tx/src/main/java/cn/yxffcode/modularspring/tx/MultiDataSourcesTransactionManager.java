@@ -30,7 +30,7 @@ import static com.google.common.base.Preconditions.checkState;
  * {@link SimpleTransactionManager#doCleanupAfterCompletion(Object)} unbinding the each resource
  * DataSource and common resources are been unbind automatically by
  * {@link AbstractPlatformTransactionManager#cleanupAfterCompletion(DefaultTransactionStatus)}
- *
+ *问题：多个事务管理器在commit的时候，无法做到失败回滚，使用此事务管理器必须能接受多库非一致
  * @author gaohang on 15/12/28.
  */
 public class MultiDataSourcesTransactionManager extends AbstractPlatformTransactionManager implements InitializingBean {
