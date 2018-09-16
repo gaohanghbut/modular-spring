@@ -18,6 +18,7 @@
     <module>modular-spring-mybatis</module>
     <module>modular-spring-test</module>
     <module>modular-spring-plugin-api</module>
+    <module>modular-spring-config</module>
   </modules>
 
   <properties>
@@ -195,6 +196,13 @@
         <version>3.4.0</version>
         <scope>compile</scope>
       </dependency>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-config</artifactId>
+        <version>2.0.2.BUILD-SNAPSHOT</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   <dependencies>
@@ -251,7 +259,16 @@
       <artifactId>commons-compress</artifactId>
     </dependency>
   </dependencies>
-
+  <repositories>
+    <repository>
+      <id>spring-snapshots</id>
+      <name>Spring Snapshots</name>
+      <url>https://repo.spring.io/libs-snapshot</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
   <build>
     <plugins>
       <plugin>
