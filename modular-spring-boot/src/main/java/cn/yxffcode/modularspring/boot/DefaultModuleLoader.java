@@ -63,6 +63,10 @@ public class DefaultModuleLoader implements ModuleLoader {
       }
     }
     ModuleLoadContextHolder.clean();
+    //invoke preRun
+    for (ModuleApplicationContext moduleApplicationContext : applicationContexts.values()) {
+      moduleApplicationContext.prepareRun();
+    }
     return applicationContexts;
   }
 
