@@ -1,5 +1,8 @@
 package cn.yxffcode.modularspring.core.context;
 
+import cn.yxffcode.modularspring.core.ext.DefaultExtensionHandlerInjector;
+import cn.yxffcode.modularspring.core.ext.ExtensionHandlerBean;
+import cn.yxffcode.modularspring.core.ext.ExtensionHandlerInjector;
 import cn.yxffcode.modularspring.core.io.JarEntryResource;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -11,6 +14,8 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * @author gaohang on 7/9/17.
@@ -18,11 +23,14 @@ import java.io.IOException;
 public class DefaultModuleApplicationContext extends AbstractXmlApplicationContext implements ModuleApplicationContext {
   protected final String moduleName;
 
+  private final ExtensionHandlerInjector extensionHandlerInjector;
+
   public DefaultModuleApplicationContext(String[] configLocations, boolean refresh,
                                          ApplicationContext parent, String moduleName) {
     super(parent);
     this.moduleName = moduleName;
     setConfigLocations(configLocations);
+    extensionHandlerInjector = new DefaultExtensionHandlerInjector(this);
     if (refresh) {
       refresh();
     }
@@ -42,6 +50,7 @@ public class DefaultModuleApplicationContext extends AbstractXmlApplicationConte
   }
 
   protected void preProcessBeforeRefresh() {
+    //add bean post processors
   }
 
   @Override
@@ -58,5 +67,25 @@ public class DefaultModuleApplicationContext extends AbstractXmlApplicationConte
   @Override
   public String getModuleName() {
     return moduleName;
+  }
+
+  @Override
+  public void prepareRun() {
+    Map<String, ExtensionHandlerBean> beans = getExtensionHandlerBeans();
+    if (beans == null || beans.isEmpty()) {
+      return;
+    }
+    for (ExtensionHandlerBean extensionHandlerBean : beans.values()) {
+      //执行扩展点的注入
+      extensionHandlerInjector.inject(extensionHandlerBean);
+    }
+  }
+
+  private Map<String, ExtensionHandlerBean> getExtensionHandlerBeans() {
+    try {
+      return getBeansOfType(ExtensionHandlerBean.class);
+    } catch (BeansException e) {
+      return Collections.emptyMap();
+    }
   }
 }

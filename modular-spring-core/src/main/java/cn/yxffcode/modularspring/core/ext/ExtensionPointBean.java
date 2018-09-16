@@ -32,6 +32,10 @@ public class ExtensionPointBean implements ApplicationContextAware {
     return beanName;
   }
 
+  public Object getBean() {
+    return applicationContext.getBean(beanName);
+  }
+
   public ApplicationContext getApplicationContext() {
     return applicationContext;
   }

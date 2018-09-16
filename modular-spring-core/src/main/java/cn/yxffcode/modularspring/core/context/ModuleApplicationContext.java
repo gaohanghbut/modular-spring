@@ -7,4 +7,9 @@ import org.springframework.context.ConfigurableApplicationContext;
  */
 public interface ModuleApplicationContext extends ConfigurableApplicationContext {
   String getModuleName();
+
+  /**
+   * 运行前准备
+   */
+  void prepareRun();
 }

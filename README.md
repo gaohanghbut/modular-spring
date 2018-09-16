@@ -224,6 +224,10 @@ public class PostFactoryBeanModuleLoadListener implements ModuleLoadListener {
 ```
 
 ## 扩展点
+扩展点提供三种使用方式：
+* 指定接口，其它模块中提供接口的实现，仅限于接口只有一个实现的情况
+* 使用扩展点容器，只需要将扩展点接口配置成ExtensionContainer即哥，适用于一个接口有多个实现的情况
+* Extension-Handler，适用于有复杂的扩展点注入逻辑的情况
 ### 扩展接口
 有时候,一个模块中需要使用的接口的实现不由此模块决定,比如数据访问模块需要使用DataSource,而DataSource由集成此模块的系统主模块决定.
 需要通过一种扩展机制,将数据源注入到模块中,在modular-spring中支持扩展点接口,可以将一个接口声明为扩展点,在其它模块中声明接口的实现bean来达到扩展的目的.
@@ -250,6 +254,15 @@ public class PostFactoryBeanModuleLoadListener implements ModuleLoadListener {
   <modular:extension-point extension-name="testExtensionContainer" ref="ext2"/>
 ```
 同一个ExtensionContainer的扩展点实例可以在不同的模块中
+### Extension-Handler
+对于复杂的扩展点处理逻辑，需要提供一个extension-handler类，使用方式如下：
+```xml
+<bean name="myExtensionHandler" class="xxx"/>
+<modular:extension-handler>
+    <modular:listener-method name="methodName1" extension-type="class1"/>
+    <modular:listener-method name="methodName2" extension-type="class2"/>
+</modular:extension-handler>
+```
 ## 插件
 对于通过类加载器做隔离的场景，可能过插件来实现，比如：
 * 复杂的库的接入，这种情况比较多，例如接入不同的中间件，每个中间件的依赖比较多，需要花大量精力处理包冲突等依赖问题，中间件升级困难
