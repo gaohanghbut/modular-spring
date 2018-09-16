@@ -258,10 +258,15 @@ public class PostFactoryBeanModuleLoadListener implements ModuleLoadListener {
 对于复杂的扩展点处理逻辑，需要提供一个extension-handler类，使用方式如下：
 ```xml
 <bean name="myExtensionHandler" class="xxx"/>
-<modular:extension-handler>
+<modular:extension-handler name="myExtensionHandler" handler-bean-ref="myExtensionHandler">
     <modular:listener-method name="methodName1" extension-type="class1"/>
     <modular:listener-method name="methodName2" extension-type="class2"/>
 </modular:extension-handler>
+```
+注入扩展点的模块中的使用方式与前两种一样：
+```xml
+<bean name="ext2" class="class1"/>
+<modular:extension-point extension-name="myExtensionHandler" ref="ext2"/>
 ```
 ## 插件
 对于通过类加载器做隔离的场景，可能过插件来实现，比如：
