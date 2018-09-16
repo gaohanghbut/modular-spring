@@ -58,6 +58,7 @@ public class ApplicationManager {
     classLoaderManager.setExportedClassLoader(exportedClassLoader);
     final ModularClassLoader modularClassLoader = new ModularClassLoader(exportedClassLoader);
     classLoaderManager.setAppClassLoader(modularClassLoader);
+    Thread.currentThread().setContextClassLoader(modularClassLoader);
 
     loadPlugins(classpathClassLoader);
 

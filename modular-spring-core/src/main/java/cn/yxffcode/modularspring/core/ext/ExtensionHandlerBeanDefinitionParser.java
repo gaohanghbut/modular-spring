@@ -22,11 +22,18 @@ public class ExtensionHandlerBeanDefinitionParser implements BeanDefinitionParse
     final String extensionName = element.getAttribute("name");
     final String ref = element.getAttribute("handler-bean-ref");
 
-    NodeList listenerMethods = element.getElementsByTagName("listener-method");
+    NodeList listenerMethods = element.getChildNodes();
     List<ExtensionHandlerBean.ListenerMethod> listenerMethodBeans = Lists.newArrayList();
     try {
       for (int i = 0, j = listenerMethods.getLength(); i < j; i++) {
-        Element listenerMethod = (Element) listenerMethods.item(i);
+        final Node item = listenerMethods.item(i);
+        if (!(item instanceof Element)) {
+          continue;
+        }
+        Element listenerMethod = (Element) item;
+        if (!"listener-method".equals(listenerMethod.getLocalName())) {
+          continue;
+        }
         listenerMethodBeans.add(new ExtensionHandlerBean.ListenerMethod(
             listenerMethod.getAttribute("name"), Class.forName(listenerMethod.getAttribute("extension-type"))));
       }

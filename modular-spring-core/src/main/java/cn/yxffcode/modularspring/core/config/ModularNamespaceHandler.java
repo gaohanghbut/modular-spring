@@ -1,6 +1,7 @@
 package cn.yxffcode.modularspring.core.config;
 
 import cn.yxffcode.modularspring.core.ext.ExtensionBeanDefinitionParser;
+import cn.yxffcode.modularspring.core.ext.ExtensionHandlerBeanDefinitionParser;
 import cn.yxffcode.modularspring.core.ext.ExtensionPointBeanDefinitionParser;
 import cn.yxffcode.modularspring.plugin.api.PluginDefBeanDefinitionParser;
 import cn.yxffcode.modularspring.plugin.api.PluginTools;
@@ -22,5 +23,6 @@ public class ModularNamespaceHandler extends NamespaceHandlerSupport {
     registerBeanDefinitionParser("auto-stub", new AutoStubBeanDefinitionParser());
     registerBeanDefinitionParser("stub", new StubBeanDefinitionParser());
     registerBeanDefinitionParser("plugin", new PluginBeanDefinitionParser());
+    registerBeanDefinitionParser("extension-handler", new ExtensionHandlerBeanDefinitionParser());
   }
 }

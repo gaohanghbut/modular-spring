@@ -52,7 +52,7 @@
         </xsd:annotation>
         <xsd:complexType>
             <xsd:sequence>
-                <xsd:element name="listener-method" type="xsd:string" minOccurs="0" maxOccurs="unbounded">
+                <xsd:element name="listener-method" minOccurs="0" maxOccurs="unbounded">
                     <xsd:annotation>
                         <xsd:documentation><![CDATA[
 接收扩展点对象的方法，name表示方法名，extension-type表示接收的扩展点的类型
