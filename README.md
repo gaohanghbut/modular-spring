@@ -10,6 +10,8 @@ Spring框架是一把灵活锋利的瑞士军刀，这里通过扩展Spring，�
 * modular-spring-plugin-api：开发插件的api包
 * modular-spring-mybatis：模块化后，对mybatis映射接口的支持
 
+测试工程地址：https://github.com/gaohanghbut/modular-spring-test
+
 
 ## 模块化
 面向对象中的封装是指利用抽象数据类型将数据和基于数据的操作封装在一起，
