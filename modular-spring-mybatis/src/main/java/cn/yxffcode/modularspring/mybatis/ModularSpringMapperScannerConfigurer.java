@@ -14,8 +14,10 @@ import java.lang.reflect.Method;
 import java.util.Objects;
 
 /**
+ * @deprecated 可使用@ModularService代替
  * @author gaohang on 9/9/17.
  */
+@Deprecated
 public class ModularSpringMapperScannerConfigurer extends MapperScannerConfigurer {
   private final BeanNameGenerator beanNameGenerator = new DefaultBeanNameGenerator();
 
