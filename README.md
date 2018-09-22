@@ -770,6 +770,7 @@ public interface TestServiceFacade {
 全局 + 接口级别 + 方法级别
 
 ### 与Spring集成
+#### xml配置方式
 在Spring中添加配置:
 ```xml
   <bean class="cn.yxffcode.modularspring.http.HttpMapperAutoConfigurer">
@@ -791,7 +792,7 @@ public interface TestServiceFacade {
         <value>cn.yxffcode.xxx</value>
       </array>
     </property>
-    <property name="annotation" value="org.springframework.stereotype.Component"/>
+    <property name="annotation" value="cn.yxffcode.modularspring.http.HttpMapper"/>
 
     <!--以下是可选-->
     <property name="createModularService" value="true"/>
@@ -804,7 +805,20 @@ public interface TestServiceFacade {
     <property name="httpClientFactory" ref="defaultHttpClientFactory"/>
   </bean>
 ```
+#### 注解方式
+使用@EnableModularSpringHttp，使用之前要先让spring支持注解配置：
+```xml
+<context:annotation-config/>
+```
+```java
+@EnableModularSpringHttp(
+    basePackages = {"com.xxx.xxx"},
+    createModularService = true
+)
+public class Configure {
+}
 
+```
 ## 模块化工程结构参考
 
 ## 实现细节
