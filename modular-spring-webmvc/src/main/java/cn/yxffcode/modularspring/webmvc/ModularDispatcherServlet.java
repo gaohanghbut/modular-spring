@@ -145,6 +145,22 @@ public class ModularDispatcherServlet extends DispatcherServlet {
     }
   }
 
+  public String getWebModuleNamePrefix() {
+    return webModuleNamePrefix;
+  }
+
+  public void setWebModuleNamePrefix(String webModuleNamePrefix) {
+    this.webModuleNamePrefix = webModuleNamePrefix;
+  }
+
+  public String getCommonApplicationContext() {
+    return commonApplicationContext;
+  }
+
+  public void setCommonApplicationContext(String commonApplicationContext) {
+    this.commonApplicationContext = commonApplicationContext;
+  }
+
   private static class WebModulePredicate implements Predicate<ModuleConfig> {
     private final String webModuleNamePrefix;
 
@@ -194,21 +210,5 @@ public class ModularDispatcherServlet extends DispatcherServlet {
       rootBeanDefinition.getConstructorArgumentValues().addIndexedArgumentValue(0, applicationContext);
       wac.registerBeanDefinition(contextBeanName, rootBeanDefinition);
     }
-  }
-
-  public String getWebModuleNamePrefix() {
-    return webModuleNamePrefix;
-  }
-
-  public void setWebModuleNamePrefix(String webModuleNamePrefix) {
-    this.webModuleNamePrefix = webModuleNamePrefix;
-  }
-
-  public String getCommonApplicationContext() {
-    return commonApplicationContext;
-  }
-
-  public void setCommonApplicationContext(String commonApplicationContext) {
-    this.commonApplicationContext = commonApplicationContext;
   }
 }

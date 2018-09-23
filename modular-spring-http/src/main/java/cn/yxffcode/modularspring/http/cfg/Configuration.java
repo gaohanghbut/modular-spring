@@ -26,19 +26,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class Configuration {
 
   private final List<RequestPostProcessor> commonRequestPostProcessors;
-
-  public static ConfigurationBuilder newBuilder() {
-    return new ConfigurationBuilder();
-  }
-
   private final Map<String, MappedRequest> mappedRequests;
   private final Multimap<String, RequestPostProcessor> requestPostProcessors;
   private final Map<String, ResponseHandler> responseHandlers;
   private final HttpExecutor httpExecutor;
   private final ResponseHandler defaultResponseHandler;
   private ExecutorService callbackExecutor;
-
-
   private Configuration(Map<String, MappedRequest> mappedRequests,
                         Multimap<String, RequestPostProcessor> requestPostProcessors,
                         Map<String, ResponseHandler> responseHandlers,
@@ -53,6 +46,10 @@ public class Configuration {
     this.httpExecutor = new DefaultHttpExecutor(httpClientFactory, this);
     this.commonRequestPostProcessors = Collections.unmodifiableList(commonRequestPostProcessors);
     this.callbackExecutor = callbackExecutor;
+  }
+
+  public static ConfigurationBuilder newBuilder() {
+    return new ConfigurationBuilder();
   }
 
   public HttpExecutor getHttpExecutor() {
@@ -74,6 +71,7 @@ public class Configuration {
         if (callbackExecutor == null) {
           callbackExecutor = Executors.newCachedThreadPool(new ThreadFactory() {
             private final ThreadFactory threadFactory = Executors.defaultThreadFactory();
+
             @Override
             public Thread newThread(Runnable r) {
               final Thread thread = threadFactory.newThread(r);

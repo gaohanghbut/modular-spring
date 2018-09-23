@@ -8,10 +8,10 @@ import java.util.List;
  * @author gaohang on 2/15/18.
  */
 public abstract class PluginTools {
+  private static final List<PluginDefBeanDefinitionParser> beanDefinitionParsers = Lists.newArrayList();
+
   private PluginTools() {
   }
-
-  private static final List<PluginDefBeanDefinitionParser> beanDefinitionParsers = Lists.newArrayList();
 
   public static void registryBeanDefinitionParser(PluginDefBeanDefinitionParser beanDefinitionParser) {
     beanDefinitionParsers.add(beanDefinitionParser);

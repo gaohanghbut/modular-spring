@@ -8,13 +8,13 @@ public class DefaultClassLoaderManager implements ClassLoaderManager {
   private ExportedClassLoader exportedClassLoader;
 
   @Override
-  public void setAppClassLoader(ModularClassLoader appClassLoader) {
-    this.appClassLoader = appClassLoader;
+  public ModularClassLoader getAppClassLoader() {
+    return appClassLoader;
   }
 
   @Override
-  public ModularClassLoader getAppClassLoader() {
-    return appClassLoader;
+  public void setAppClassLoader(ModularClassLoader appClassLoader) {
+    this.appClassLoader = appClassLoader;
   }
 
   @Override

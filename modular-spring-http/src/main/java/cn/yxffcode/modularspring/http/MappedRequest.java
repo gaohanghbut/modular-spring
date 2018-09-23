@@ -18,13 +18,8 @@ import java.util.Map;
  */
 public class MappedRequest {
 
-  public static MappedRequestBuilder newBuilder(Method method) {
-    return new MappedRequestBuilder(method);
-  }
-
   private static final Splitter PARAM_SPLITTER = Splitter.on('=').trimResults();
   private static final Splitter SEPERATE_SPLITTER = Splitter.on('&').trimResults();
-
   private final String id;
   private final RequestInfo requestInfo;
   private final HttpMethod httpMethod;
@@ -33,7 +28,6 @@ public class MappedRequest {
   private final Type returnType;
   private final Map<String, String> queryStringParams;
   private final TextTemplate pureUrlTemplate;
-
   private MappedRequest(String id,
                         RequestInfo requestInfo,
                         HttpMethod httpMethod,
@@ -64,6 +58,10 @@ public class MappedRequest {
 
       this.pureUrlTemplate = new TextTemplate(requestInfo.getUrl().substring(0, i));
     }
+  }
+
+  public static MappedRequestBuilder newBuilder(Method method) {
+    return new MappedRequestBuilder(method);
   }
 
   public String getId() {
@@ -148,10 +146,10 @@ public class MappedRequest {
   }
 
   public static final class MappedRequestBuilder {
+    private final Type returnType;
     private String id;
     private HttpMethod httpMethod;
     private EntityType entityType;
-    private final Type returnType;
     private RequestInfo requestInfo;
 
     public MappedRequestBuilder(Method method) {

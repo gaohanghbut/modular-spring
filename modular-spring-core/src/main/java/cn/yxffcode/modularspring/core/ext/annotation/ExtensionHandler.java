@@ -7,6 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * 标记在类上，用于说明此类可用于处理扩展点
+ *
  * @author gaohang
  */
 @Target(ElementType.TYPE)

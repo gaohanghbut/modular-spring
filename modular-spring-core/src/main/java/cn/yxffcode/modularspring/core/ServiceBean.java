@@ -20,12 +20,6 @@ public class ServiceBean implements ApplicationContextAware {
     this.ref = beanRef;
   }
 
-  @Override
-  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-    this.applicationContext = applicationContext;
-    ServiceManager.registryService(this);
-  }
-
   public String getRef() {
     return ref;
   }
@@ -40,5 +34,11 @@ public class ServiceBean implements ApplicationContextAware {
 
   public ApplicationContext getApplicationContext() {
     return applicationContext;
+  }
+
+  @Override
+  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    this.applicationContext = applicationContext;
+    ServiceManager.registryService(this);
   }
 }

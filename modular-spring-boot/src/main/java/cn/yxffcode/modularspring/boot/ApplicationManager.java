@@ -30,14 +30,11 @@ import java.util.Map;
 public class ApplicationManager {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationManager.class);
-
-  private Map<ModuleConfig, ModuleApplicationContext> applicationContexts = Collections.emptyMap();
-
-  private ModuleLoaderFactory moduleLoaderFactory;
   private final PluginLoader pluginLoader;
   private final ModularSpringConfiguration modularSpringConfiguration;
-
   private final ClassLoaderManager classLoaderManager = new DefaultClassLoaderManager();
+  private Map<ModuleConfig, ModuleApplicationContext> applicationContexts = Collections.emptyMap();
+  private ModuleLoaderFactory moduleLoaderFactory;
   private List<Plugin> plugins;
   private ModuleLoader moduleLoader;
 

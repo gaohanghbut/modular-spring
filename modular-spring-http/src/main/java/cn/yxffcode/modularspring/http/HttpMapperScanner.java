@@ -21,15 +21,13 @@ import java.util.Set;
 
 public class HttpMapperScanner extends ClassPathBeanDefinitionScanner {
 
-  private Class<? extends Annotation> annotationClass;
-
   private final HttpClientFactory httpClientFactory;
   private final List<RequestPostProcessor> requestPostProcessors;
   private final ResponseHandler defaultResponseHandler;
-  private Configuration configuration;
   private final boolean createModularService;
-
   private final BeanNameGenerator beanNameGenerator = new DefaultBeanNameGenerator();
+  private Class<? extends Annotation> annotationClass;
+  private Configuration configuration;
 
 
   public HttpMapperScanner(BeanDefinitionRegistry registry,

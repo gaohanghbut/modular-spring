@@ -30,7 +30,8 @@ import static com.google.common.base.Preconditions.checkState;
  * {@link SimpleTransactionManager#doCleanupAfterCompletion(Object)} unbinding the each resource
  * DataSource and common resources are been unbind automatically by
  * {@link AbstractPlatformTransactionManager#cleanupAfterCompletion(DefaultTransactionStatus)}
- *问题：多个事务管理器在commit的时候，无法做到失败回滚，使用此事务管理器必须能接受多库非一致
+ * 问题：多个事务管理器在commit的时候，无法做到失败回滚，使用此事务管理器必须能接受多库非一致
+ *
  * @author gaohang on 15/12/28.
  */
 public class MultiDataSourcesTransactionManager extends AbstractPlatformTransactionManager implements InitializingBean {
@@ -74,7 +75,8 @@ public class MultiDataSourcesTransactionManager extends AbstractPlatformTransact
     }
   }
 
-  @Override protected void doCommit(DefaultTransactionStatus status) throws TransactionException {
+  @Override
+  protected void doCommit(DefaultTransactionStatus status) throws TransactionException {
     @SuppressWarnings("unchecked") TransactionObject tx =
         (TransactionObject) status.getTransaction();
     checkState(tx.transactionHolder.statuses != null &&
@@ -99,7 +101,8 @@ public class MultiDataSourcesTransactionManager extends AbstractPlatformTransact
 
   }
 
-  @Override protected void doRollback(DefaultTransactionStatus status) throws TransactionException {
+  @Override
+  protected void doRollback(DefaultTransactionStatus status) throws TransactionException {
     @SuppressWarnings("unchecked") TransactionObject tx =
         (TransactionObject) status.getTransaction();
 
@@ -125,13 +128,15 @@ public class MultiDataSourcesTransactionManager extends AbstractPlatformTransact
     }
   }
 
-  @Override protected boolean isExistingTransaction(Object transaction)
+  @Override
+  protected boolean isExistingTransaction(Object transaction)
       throws TransactionException {
     TransactionObject tx = (TransactionObject) transaction;
     return tx.transactionHolder.statuses != null && tx.transactionHolder.transactionInActive;
   }
 
-  @Override protected void doCleanupAfterCompletion(Object transaction) {
+  @Override
+  protected void doCleanupAfterCompletion(Object transaction) {
     //unbind resource.
     TransactionObject tx = (TransactionObject) transaction;
     if (tx.newTransaction) {

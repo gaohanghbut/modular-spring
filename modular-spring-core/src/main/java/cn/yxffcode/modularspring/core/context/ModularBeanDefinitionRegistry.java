@@ -3,6 +3,7 @@ package cn.yxffcode.modularspring.core.context;
 import cn.yxffcode.modularspring.core.ServiceDeclarationException;
 import cn.yxffcode.modularspring.core.annotation.ModularReference;
 import cn.yxffcode.modularspring.core.annotation.ModularService;
+import cn.yxffcode.modularspring.core.config.AnnotationConfigBean;
 import cn.yxffcode.modularspring.core.config.ModularBeanUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.*;
+import org.springframework.context.annotation.AnnotationConfigUtils;
 
 import java.lang.reflect.Field;
 
@@ -28,8 +30,9 @@ public class ModularBeanDefinitionRegistry implements BeanDefinitionRegistry {
 
   public ModularBeanDefinitionRegistry(BeanDefinitionRegistry delegate) {
     this.delegate = checkNotNull(delegate);
-    final RootBeanDefinition rootBeanDefinition = new RootBeanDefinition(ModularReferenceInjectProcessor.class);
-    delegate.registerBeanDefinition(ModularBeanDefinitionRegistry.class.getName(), rootBeanDefinition);
+    delegate.registerBeanDefinition(ModularBeanDefinitionRegistry.class.getName(), new RootBeanDefinition(ModularReferenceInjectProcessor.class));
+    delegate.registerBeanDefinition(AnnotationConfigBean.class.getName(), new RootBeanDefinition(AnnotationConfigBean.class));
+    AnnotationConfigUtils.registerAnnotationConfigProcessors(this);
   }
 
   @Override

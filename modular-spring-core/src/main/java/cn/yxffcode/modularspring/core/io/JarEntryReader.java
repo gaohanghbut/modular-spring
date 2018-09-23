@@ -17,10 +17,10 @@ import static com.google.common.base.Preconditions.checkArgument;
  * @author gaohang on 7/2/17.
  */
 public final class JarEntryReader {
+  private static final Splitter JAR_FILE_SPLITTER = Splitter.on("!/").trimResults();
+
   private JarEntryReader() {
   }
-
-  private static final Splitter JAR_FILE_SPLITTER = Splitter.on("!/").trimResults();
 
   public static String toString(final String jarEntryPath) throws IOException {
     checkArgument(!Strings.isNullOrEmpty(jarEntryPath));

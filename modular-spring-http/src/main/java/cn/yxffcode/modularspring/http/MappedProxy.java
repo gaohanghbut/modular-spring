@@ -24,18 +24,17 @@ import java.util.concurrent.TimeUnit;
  */
 public class MappedProxy extends AbstractInvocationHandler {
 
-  public static <T> T newProxy(Configuration configuration, Class<T> interfaceType) {
-    return Reflection.newProxy(interfaceType, new MappedProxy(configuration, interfaceType));
-  }
-
   private final Configuration configuration;
   private final Class<?> mapperClass;
   private final HttpExecutor httpExecutor;
-
   private MappedProxy(Configuration configuration, Class<?> mapperClass) {
     this.configuration = configuration;
     this.mapperClass = mapperClass;
     this.httpExecutor = configuration.getHttpExecutor();
+  }
+
+  public static <T> T newProxy(Configuration configuration, Class<T> interfaceType) {
+    return Reflection.newProxy(interfaceType, new MappedProxy(configuration, interfaceType));
   }
 
   @Override

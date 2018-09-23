@@ -41,7 +41,8 @@ class SimpleTransactionManager implements PlatformTransactionManager {
     this.dataSource = dataSource;
   }
 
-  @Override public TransactionStatus getTransaction(TransactionDefinition definition)
+  @Override
+  public TransactionStatus getTransaction(TransactionDefinition definition)
       throws TransactionException {
     Object transaction = doGetTransaction();
 
@@ -60,7 +61,8 @@ class SimpleTransactionManager implements PlatformTransactionManager {
     return newTransactionStatus(definition, transaction, true, false, true, null);
   }
 
-  @Override public void commit(TransactionStatus status) throws TransactionException {
+  @Override
+  public void commit(TransactionStatus status) throws TransactionException {
     if (status.isCompleted()) {
       throw new IllegalTransactionStateException(
           "Transaction is already completed - do not call commit or rollback more than once per transaction");
@@ -80,7 +82,8 @@ class SimpleTransactionManager implements PlatformTransactionManager {
     processCommit(defStatus);
   }
 
-  @Override public void rollback(TransactionStatus status) throws TransactionException {
+  @Override
+  public void rollback(TransactionStatus status) throws TransactionException {
     if (status.isCompleted()) {
       throw new IllegalTransactionStateException(
           "Transaction is already completed - do not call commit or rollback more than once per transaction");
@@ -354,7 +357,8 @@ class SimpleTransactionManager implements PlatformTransactionManager {
       getConnectionHolder().setRollbackOnly();
     }
 
-    @Override public boolean isRollbackOnly() {
+    @Override
+    public boolean isRollbackOnly() {
       return getConnectionHolder().isRollbackOnly();
     }
   }

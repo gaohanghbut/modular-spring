@@ -11,10 +11,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author gaohang on 7/9/17.
  */
 final class ExtensionHolder {
+  private static final Multimap<String, ExtensionPointBean> extensionPointBeanMap = HashMultimap.create();
+
   private ExtensionHolder() {
   }
-
-  private static final Multimap<String, ExtensionPointBean> extensionPointBeanMap = HashMultimap.create();
 
   public static void registryExtensionPoint(ExtensionPointBean extensionPointBean) {
     checkNotNull(extensionPointBean);

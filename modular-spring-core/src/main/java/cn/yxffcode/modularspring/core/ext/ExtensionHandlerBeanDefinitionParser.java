@@ -1,12 +1,10 @@
 package cn.yxffcode.modularspring.core.ext;
 
+import cn.yxffcode.modularspring.core.ext.utils.ExtensionPointUtils;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.BeanDefinitionHolder;
-import org.springframework.beans.factory.parsing.BeanComponentDefinition;
 import org.springframework.beans.factory.support.BeanNameGenerator;
 import org.springframework.beans.factory.support.DefaultBeanNameGenerator;
-import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -46,13 +44,7 @@ public class ExtensionHandlerBeanDefinitionParser implements BeanDefinitionParse
       parserContext.getReaderContext().fatal("找不到类", e);
     }
 
-    final RootBeanDefinition bean = new RootBeanDefinition();
-    bean.setBeanClass(ExtensionHandlerBean.class);
-    bean.getConstructorArgumentValues().addIndexedArgumentValue(0, extensionName);
-    bean.getConstructorArgumentValues().addIndexedArgumentValue(1, ref);
-    bean.getConstructorArgumentValues().addIndexedArgumentValue(2, listenerMethodBeans);
-
-    parserContext.registerBeanComponent(new BeanComponentDefinition(new BeanDefinitionHolder(bean, HANDLER_CONF_BEAN_NAME_GENERATOR.generateBeanName(bean, parserContext.getRegistry()))));
+    ExtensionPointUtils.registryExtensionHandler(parserContext.getRegistry(), extensionName, ref, listenerMethodBeans);
     return null;
   }
 }

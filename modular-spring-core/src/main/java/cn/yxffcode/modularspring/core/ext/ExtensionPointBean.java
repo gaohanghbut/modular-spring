@@ -18,12 +18,6 @@ public class ExtensionPointBean implements ApplicationContextAware {
     this.beanName = beanName;
   }
 
-  @Override
-  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-    this.applicationContext = applicationContext;
-    ExtensionHolder.registryExtensionPoint(this);
-  }
-
   public String getExtensionName() {
     return extensionName;
   }
@@ -38,5 +32,11 @@ public class ExtensionPointBean implements ApplicationContextAware {
 
   public ApplicationContext getApplicationContext() {
     return applicationContext;
+  }
+
+  @Override
+  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    this.applicationContext = applicationContext;
+    ExtensionHolder.registryExtensionPoint(this);
   }
 }

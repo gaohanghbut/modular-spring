@@ -61,10 +61,10 @@ public class ModuleConfig {
   @Override
   public String toString() {
     return Objects.toStringHelper(this)
-            .add("moduleName", moduleName)
-            .add("dependenceModules", dependenceModules)
-            .add("springConfigs", springConfigs)
-            .add("fromFile", fromFile)
-            .toString();
+        .add("moduleName", moduleName)
+        .add("dependenceModules", dependenceModules)
+        .add("springConfigs", springConfigs)
+        .add("fromFile", fromFile)
+        .toString();
   }
 }

@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modular="http://www.yxffcode.cn/modular"
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:modular="http://www.yxffcode.cn/modular" xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.yxffcode.cn/modular http://www.yxffcode.cn/modular.xsd">
 
-  <bean class="cn.yxffcode.modularspring.mybatis.ModularSpringMapperScannerConfigurer">
-    <property name="createModularService" value="true"/>
-    <property name="basePackage" value="cn.yxffcode.modularspring.mybatis"/>
-    <property name="annotationClass" value="org.springframework.stereotype.Repository"/>
-  </bean>
+    <bean class="cn.yxffcode.modularspring.mybatis.ModularSpringMapperScannerConfigurer">
+        <property name="createModularService" value="true"/>
+        <property name="basePackage" value="cn.yxffcode.modularspring.mybatis"/>
+        <property name="annotationClass" value="org.springframework.stereotype.Repository"/>
+    </bean>
 
-  <bean name="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource"/>
+    <bean name="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource"/>
 
-  <bean name="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
-    <constructor-arg>
-      <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-        <property name="dataSource" ref="dataSource"/>
-      </bean>
-    </constructor-arg>
-  </bean>
+    <bean name="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg>
+            <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+                <property name="dataSource" ref="dataSource"/>
+            </bean>
+        </constructor-arg>
+    </bean>
 
-  <modular:reference name="testMapperRef" interface="cn.yxffcode.modularspring.mybatis.TestMapper"/>
+    <modular:reference name="testMapperRef" interface="cn.yxffcode.modularspring.mybatis.TestMapper"/>
 </beans>

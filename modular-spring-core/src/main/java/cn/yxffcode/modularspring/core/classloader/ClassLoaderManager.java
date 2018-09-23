@@ -4,9 +4,9 @@ package cn.yxffcode.modularspring.core.classloader;
  * @author gaohang on 2/15/18.
  */
 public interface ClassLoaderManager {
-  void setAppClassLoader(final ModularClassLoader appClassLoader);
-
   ModularClassLoader getAppClassLoader();
+
+  void setAppClassLoader(final ModularClassLoader appClassLoader);
 
   ExportedClassLoader getExportedClassLoader();
 

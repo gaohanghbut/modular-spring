@@ -14,16 +14,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public final class ObjectTraversal {
   private static final Splitter DOT = Splitter.on('.').trimResults();
-
-  public static ObjectTraversal wrap(final Object obj) {
-    checkNotNull(obj);
-    return new ObjectTraversal(obj);
-  }
-
   private final Object target;
 
   private ObjectTraversal(Object target) {
     this.target = target;
+  }
+
+  public static ObjectTraversal wrap(final Object obj) {
+    checkNotNull(obj);
+    return new ObjectTraversal(obj);
   }
 
   public Object get(String path) {
@@ -38,7 +37,7 @@ public final class ObjectTraversal {
         }
         final Field field = v.getClass().getDeclaredField(subPath);
         field.setAccessible(true);
-         v = field.get(target);
+        v = field.get(target);
       }
       return v;
     } catch (NoSuchFieldException e) {

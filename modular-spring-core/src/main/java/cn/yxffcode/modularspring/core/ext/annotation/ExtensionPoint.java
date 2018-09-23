@@ -6,15 +6,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 标记在方法上，用于标示此方法可接受某个类型的扩展对象
+ * 标记在类上，用于说明此类可用于处理扩展点
  *
  * @author gaohang
  */
-@Target(ElementType.METHOD)
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ExtensionListener {
+public @interface ExtensionPoint {
   /**
-   * 表示接收的扩展点类型，如果是Object，则根据参数类型做匹配
+   * @return extension name
    */
-  Class<?> value() default Object.class;
+  String value();
 }

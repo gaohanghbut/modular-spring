@@ -18,7 +18,7 @@ class ModuleRequestMapping implements RequestMapping {
 
   ModuleRequestMapping(final String moduleName) {
     moduleNames = new String[]{
-            moduleName
+        moduleName
     };
   }
 

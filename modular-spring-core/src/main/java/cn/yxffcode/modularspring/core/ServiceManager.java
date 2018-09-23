@@ -9,10 +9,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author gaohang on 6/24/17.
  */
 public final class ServiceManager {
+  private static final Table<String, String, ServiceBean> serviceBeanTable = HashBasedTable.create();
+
   private ServiceManager() {
   }
-
-  private static final Table<String, String, ServiceBean> serviceBeanTable = HashBasedTable.create();
 
   public static void registryService(ServiceBean serviceBean) {
     checkNotNull(serviceBean);

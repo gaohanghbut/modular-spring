@@ -38,12 +38,16 @@ public class DefaultWebModuleApplicationContext extends DefaultModuleApplication
     setDisplayName(moduleName + " WebApplicationContext");
   }
 
+  public ServletContext getServletContext() {
+    return this.servletContext;
+  }
+
   public void setServletContext(ServletContext servletContext) {
     this.servletContext = servletContext;
   }
 
-  public ServletContext getServletContext() {
-    return this.servletContext;
+  public ServletConfig getServletConfig() {
+    return this.servletConfig;
   }
 
   public void setServletConfig(ServletConfig servletConfig) {
@@ -53,8 +57,8 @@ public class DefaultWebModuleApplicationContext extends DefaultModuleApplication
     }
   }
 
-  public ServletConfig getServletConfig() {
-    return this.servletConfig;
+  public String getNamespace() {
+    return this.namespace;
   }
 
   public void setNamespace(String namespace) {
@@ -62,10 +66,6 @@ public class DefaultWebModuleApplicationContext extends DefaultModuleApplication
     if (namespace != null) {
       setDisplayName("WebApplicationContext for namespace '" + namespace + "'");
     }
-  }
-
-  public String getNamespace() {
-    return this.namespace;
   }
 
   @Override

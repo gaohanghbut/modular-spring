@@ -10,11 +10,10 @@ import java.util.List;
  * @author gaohang
  */
 public class ExtensionHandlerBean implements ApplicationContextAware {
-  private ApplicationContext applicationContext;
-
   private final String extensionName;
   private final String ref;
   private final List<ListenerMethod> listenerMethods;
+  private ApplicationContext applicationContext;
 
   public ExtensionHandlerBean(String extensionName, String ref, List<ListenerMethod> listenerMethods) {
     this.extensionName = extensionName;

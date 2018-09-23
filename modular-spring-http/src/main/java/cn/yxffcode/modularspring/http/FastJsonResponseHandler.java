@@ -14,6 +14,7 @@ import java.util.concurrent.Future;
  */
 public class FastJsonResponseHandler extends ToStringResponseHandler {
   private static final Logger LOGGER = LoggerFactory.getLogger(FastJsonResponseHandler.class);
+
   @Override
   public Object handle(MappedRequest request, HttpResponse response) {
     final String text = (String) super.handle(request, response);

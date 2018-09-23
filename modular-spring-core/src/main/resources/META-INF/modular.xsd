@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 
-<xsd:schema xmlns="http://www.yxffcode.cn/modular"
-            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns="http://www.yxffcode.cn/modular"
             targetNamespace="http://www.yxffcode.cn/modular"
             elementFormDefault="qualified"
             attributeFormDefault="unqualified">
