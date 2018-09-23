@@ -4,6 +4,8 @@ import com.google.common.collect.Lists;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.parsing.BeanComponentDefinition;
+import org.springframework.beans.factory.support.BeanNameGenerator;
+import org.springframework.beans.factory.support.DefaultBeanNameGenerator;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -17,6 +19,9 @@ import java.util.List;
  * @author gaohang on 7/9/17.
  */
 public class ExtensionHandlerBeanDefinitionParser implements BeanDefinitionParser {
+
+  private static final BeanNameGenerator HANDLER_CONF_BEAN_NAME_GENERATOR = new DefaultBeanNameGenerator();
+
   @Override
   public BeanDefinition parse(Element element, ParserContext parserContext) {
     final String extensionName = element.getAttribute("name");
@@ -47,7 +52,7 @@ public class ExtensionHandlerBeanDefinitionParser implements BeanDefinitionParse
     bean.getConstructorArgumentValues().addIndexedArgumentValue(1, ref);
     bean.getConstructorArgumentValues().addIndexedArgumentValue(2, listenerMethodBeans);
 
-    parserContext.registerBeanComponent(new BeanComponentDefinition(new BeanDefinitionHolder(bean, extensionName)));
+    parserContext.registerBeanComponent(new BeanComponentDefinition(new BeanDefinitionHolder(bean, HANDLER_CONF_BEAN_NAME_GENERATOR.generateBeanName(bean, parserContext.getRegistry()))));
     return null;
   }
 }

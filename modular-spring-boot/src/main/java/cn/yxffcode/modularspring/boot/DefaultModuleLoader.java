@@ -140,7 +140,7 @@ public class DefaultModuleLoader implements ModuleLoader {
 
     for (ClasspathScanner.ResourceInfo resourceInfo : scanner.getResources()) {
       final String resourceName = resourceInfo.getResourceName();
-      final int i = resourceName.indexOf("META-INF/");
+      final int i = resourceName.indexOf("META-INF" + File.separator);
 
       final String moduleKey = resourceName.substring(0, i);
 
