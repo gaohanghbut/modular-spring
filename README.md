@@ -270,6 +270,35 @@ public class PostFactoryBeanModuleLoadListener implements ModuleLoadListener {
 <bean name="ext2" class="class1"/>
 <modular:extension-point extension-name="myExtensionHandler" ref="ext2"/>
 ```
+
+### 注解的方式使用扩展点
+支持extension-handler，提供了@ExtensionHandler和@ExtensionListener两个注解，用来取代extension-handler的xml配置，使用方式如下：
+```java
+@ExtensionHandler("testAnnotationExtensionHandler")//指定扩展点名，如果不指定，则默认使用bean name
+@Component//如果没有开启component-scan，则需要在spring的xml中配置TestAnnotationExtensionHandler bean，开启方式见使用context:component-scan的介绍
+public class TestAnnotationExtensionHandler {
+
+  @ExtensionListener
+  public void addDataSource(final DataSource dataSource) {
+    System.out.println("testAnnotationExtensionHandler add dataSource = " + dataSource);
+  }
+
+  @ExtensionListener(Object.class)
+  public void addExtension(final Object extension) {
+    System.out.println("testAnnotationExtensionHandler add extension = " + extension);
+  }
+}
+```
+
+extension-point的配置提供了@ExtensionPoint注解的支持，使用方式如下：
+```java
+@ExtensionPoint("testAnnotationExtensionHandler")//指定扩展点名
+@Component/如果没有开启component-scan，则需要在spring的xml中配置TestAnnotationExtensionHandler bean，开启方式见使用context:component-scan的介绍
+public class AnoTestExtensionPoint {
+}
+
+```
+
 ## 插件
 对于通过类加载器做隔离的场景，可能过插件来实现，比如：
 * 复杂的库的接入，这种情况比较多，例如接入不同的中间件，每个中间件的依赖比较多，需要花大量精力处理包冲突等依赖问题，中间件升级困难
