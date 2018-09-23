@@ -1,6 +1,5 @@
 package cn.yxffcode.modularspring.core.config;
 
-import cn.yxffcode.modularspring.core.config.ModularBeanUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.parsing.BeanComponentDefinition;

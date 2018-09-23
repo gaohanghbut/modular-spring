@@ -12,4 +12,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ExtensionHandler {
+  /**
+   * @return extension handler name， bean name for default value
+   */
+  String value() default "";
 }

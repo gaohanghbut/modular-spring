@@ -1,12 +1,10 @@
 package cn.yxffcode.modularspring.core.ext;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.Maps;
 import org.springframework.context.ApplicationContext;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * @author gaohang

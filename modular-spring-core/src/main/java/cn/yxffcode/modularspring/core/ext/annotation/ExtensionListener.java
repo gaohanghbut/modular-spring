@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ExtensionConsumer {
+public @interface ExtensionListener {
     /**
      * 表示接收的扩展点类型，如果是Object，则根据参数类型做匹配
      */

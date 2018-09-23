@@ -1,7 +1,5 @@
 package cn.yxffcode.modularspring.plugin.api;
 
-import java.util.regex.Pattern;
-
 /**
  * @author gaohang on 2/15/18.
  */

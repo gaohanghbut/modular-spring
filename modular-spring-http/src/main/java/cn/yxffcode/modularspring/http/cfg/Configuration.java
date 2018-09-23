@@ -1,19 +1,6 @@
 package cn.yxffcode.modularspring.http.cfg;
 
-import cn.yxffcode.modularspring.http.DELETE;
-import cn.yxffcode.modularspring.http.FastJsonResponseHandler;
-import cn.yxffcode.modularspring.http.GET;
-import cn.yxffcode.modularspring.http.HttpMethod;
-import cn.yxffcode.modularspring.http.MappedProxy;
-import cn.yxffcode.modularspring.http.MappedRequest;
-import cn.yxffcode.modularspring.http.POST;
-import cn.yxffcode.modularspring.http.PUT;
-import cn.yxffcode.modularspring.http.PostProcessors;
-import cn.yxffcode.modularspring.http.Request;
-import cn.yxffcode.modularspring.http.RequestInfo;
-import cn.yxffcode.modularspring.http.RequestPostProcessor;
-import cn.yxffcode.modularspring.http.Response;
-import cn.yxffcode.modularspring.http.ResponseHandler;
+import cn.yxffcode.modularspring.http.*;
 import cn.yxffcode.modularspring.http.http.DefaultHttpClientFactory;
 import cn.yxffcode.modularspring.http.http.DefaultHttpExecutor;
 import cn.yxffcode.modularspring.http.http.HttpClientFactory;
